@@ -40,9 +40,9 @@ bool InitList(LinkList *L)
     return true;
 }
 
-bool Empty(LinkList *L) // 判断是否为空表
+bool Empty(LinkList L) // 判断是否为空表
 {
-    return (*L == NULL);
+    return (L->next == NULL);
 }
 
 // 带头结点的插入
@@ -262,6 +262,8 @@ void freeList(LinkList L) {
         free(temp);
     }
 }
+
+
 int main()
 {
     LinkList L;
@@ -303,7 +305,6 @@ int main()
     // int length =Length(L);
     // printf("表长为%d\n",length);
     List_HeadInsert(L);
-
     printList(L);
     freeList(L);
     return 0;

@@ -1,60 +1,88 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "stdbool.h"
-typedef struct Double_linked_list {
-    int data;
-    struct Double_linked_list *prior;
-    struct Double_linked_list *next;
-} DNode, *DLinkList;
+#include <stdio.h>
+#include <stdlib.h>
 
-// 删除节点的后继节点
-bool DeleteNextDNode(DNode *p) {
-    if (p == NULL || p->next == NULL) {
-        return false;
-    }
-    DNode *q = p->next;
-    p->next = q->next;
-    if (q->next != NULL) {
-        q->next->prior = p;
-    }
-    free(q);
-    return true;
+// 定义链表节点结构
+typedef struct ListNode {
+    int val;
+    struct ListNode *next;
+} ListNode;
+
+// 创建新的链表节点
+ListNode* createNode(int val) {
+    ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
+    newNode->val = val;
+    newNode->next = NULL;
+    return newNode;
 }
 
-// 销毁双向链表
-void DestroyList(DLinkList *L)
+void DeleteNode(ListNode* p)
 {
-    DNode *temp;
-    while (*L != NULL)
-    {
-        temp = *L;
-        *L = (*L)->next;
+    ListNode* temp=p->next;
+    p->val=temp->val;
+    p->next=temp->next;
+    free(temp);
+}
+// 删除链表中值域重复的节点
+void removeDuplicates(ListNode** head) {
+    if (*head == NULL || (*head)->next == NULL) return;
+
+    ListNode* current = *head;
+    while (current != NULL && current->next != NULL) {
+        if (current->val == current->next->val) {
+            DeleteNode(current);
+        } else {
+            current = current->next;
+        }
+    }
+}
+
+// 打印链表
+void printList(ListNode* head) {
+    ListNode* current = head;
+    while (current != NULL) {
+        printf("%d ", current->val);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+// 释放链表内存
+void freeList(ListNode* head) {
+    ListNode* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
         free(temp);
     }
 }
 
 int main() {
-    // 创建一个简单的双向链表用于测试
-    DLinkList L = (DLinkList)malloc(sizeof(DNode));
-    L->data = 1;
-    L->prior = NULL;
-    L->next = (DLinkList)malloc(sizeof(DNode));
-    L->next->data = 2;
-    L->next->prior = L;
-    L->next->next = (DLinkList)malloc(sizeof(DNode));
-    L->next->next->data = 3;
-    L->next->next->prior = L->next;
-    L->next->next->next = NULL;
+    // 创建示例链表: 1 -> 1 -> 2 -> 3 -> 3 -> 3 -> 4 -> 4 -> 4 -> 7 -> 7 -> 7 -> 9 -> 9 -> 9
+    ListNode* head = createNode(1);
+    head->next = createNode(1);
+    head->next->next = createNode(2);
+    head->next->next->next = createNode(3);
+    head->next->next->next->next = createNode(3);
+    head->next->next->next->next->next = createNode(3);
+    head->next->next->next->next->next->next = createNode(4);
+    head->next->next->next->next->next->next->next = createNode(4);
+    head->next->next->next->next->next->next->next->next = createNode(4);
+    head->next->next->next->next->next->next->next->next->next = createNode(7);
+    head->next->next->next->next->next->next->next->next->next->next = createNode(7);
+    head->next->next->next->next->next->next->next->next->next->next->next = createNode(7);
+    head->next->next->next->next->next->next->next->next->next->next->next->next = createNode(9);
+    head->next->next->next->next->next->next->next->next->next->next->next->next->next = createNode(9);
+    head->next->next->next->next->next->next->next->next->next->next->next->next->next->next = createNode(9);
 
-    // 销毁链表
-    DestroyList(&L);
+    printf("Original list: ");
+    printList(head);
 
-    // 打印链表以验证链表是否被销毁
-    if (L == NULL) {
-        printf("链表已成功销毁\n");
-    } else {
-        printf("链表销毁失败\n");
-    }
+    removeDuplicates(&head);
+
+    printf("List after removing duplicates: ");
+    printList(head);
+
+    freeList(head);
 
     return 0;
 }
