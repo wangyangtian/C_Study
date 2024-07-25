@@ -1,88 +1,89 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+typedef struct LNode {
+    int data;
+    struct LNode* next;
+} LNode, *LinkList;
 
-// 定义链表节点结构
-typedef struct ListNode {
-    int val;
-    struct ListNode *next;
-} ListNode;
-
-// 创建新的链表节点
-ListNode* createNode(int val) {
-    ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
-    newNode->val = val;
-    newNode->next = NULL;
-    return newNode;
-}
-
-void DeleteNode(ListNode* p)
-{
-    ListNode* temp=p->next;
-    p->val=temp->val;
-    p->next=temp->next;
-    free(temp);
-}
-// 删除链表中值域重复的节点
-void removeDuplicates(ListNode** head) {
-    if (*head == NULL || (*head)->next == NULL) return;
-
-    ListNode* current = *head;
-    while (current != NULL && current->next != NULL) {
-        if (current->val == current->next->val) {
-            DeleteNode(current);
-        } else {
-            current = current->next;
-        }
-    }
-}
-
-// 打印链表
-void printList(ListNode* head) {
-    ListNode* current = head;
-    while (current != NULL) {
-        printf("%d ", current->val);
-        current = current->next;
-    }
-    printf("\n");
-}
-
-// 释放链表内存
-void freeList(ListNode* head) {
-    ListNode* temp;
-    while (head != NULL) {
-        temp = head;
-        head = head->next;
+void freeList(LinkList L) {
+    LNode* temp;
+    while (L != NULL) {
+        temp = L;
+        L = L->next;
         free(temp);
     }
 }
 
+bool SplitByParity(LinkList *A,LinkList *B){
+    LNode *pAL=(*A)->next;
+    LNode *pAR=(*A)->next;
+    LNode *pB=*B;
+    if((*A)->next==NULL)    return false;
+    if((*B)->next!=NULL)    freeList(*B);
+    while (pAR!=NULL)
+    {
+        if((pAR->data%2!=0)&&(pAL==pAR))
+        {
+            pAR=pAR->next;
+        }
+        else if((pAR->data%2!=0)&&(pAL!=pAR))
+        {
+            pAR=pAR->next;
+            pAL=pAL->next;
+        }
+        else
+        {
+            pAL->next=pAR->next;
+            pAR->next=NULL;
+            pB->next=pAR;
+            pB=pB->next;
+            pAR=pAL->next;
+        }     
+    } 
+    return true;
+}
+
 int main() {
-    // 创建示例链表: 1 -> 1 -> 2 -> 3 -> 3 -> 3 -> 4 -> 4 -> 4 -> 7 -> 7 -> 7 -> 9 -> 9 -> 9
-    ListNode* head = createNode(1);
-    head->next = createNode(1);
-    head->next->next = createNode(2);
-    head->next->next->next = createNode(3);
-    head->next->next->next->next = createNode(3);
-    head->next->next->next->next->next = createNode(3);
-    head->next->next->next->next->next->next = createNode(4);
-    head->next->next->next->next->next->next->next = createNode(4);
-    head->next->next->next->next->next->next->next->next = createNode(4);
-    head->next->next->next->next->next->next->next->next->next = createNode(7);
-    head->next->next->next->next->next->next->next->next->next->next = createNode(7);
-    head->next->next->next->next->next->next->next->next->next->next->next = createNode(7);
-    head->next->next->next->next->next->next->next->next->next->next->next->next = createNode(9);
-    head->next->next->next->next->next->next->next->next->next->next->next->next->next = createNode(9);
-    head->next->next->next->next->next->next->next->next->next->next->next->next->next->next = createNode(9);
+    // 测试代码
+    LinkList A = (LinkList)malloc(sizeof(LNode));
+    LinkList B = (LinkList)malloc(sizeof(LNode));
+    A->next = NULL;
+    B->next = NULL;
 
-    printf("Original list: ");
-    printList(head);
+    // 构建测试链表
+    int arr[] = {1, 2, 2, 5, 5, 6,7,7,9,9};
+    LNode* current = A;
+    for (int i = 0; i < 10; i++) {
+        LNode* node = (LNode*)malloc(sizeof(LNode));
+        node->data = arr[i];
+        node->next = NULL;
+        current->next = node;
+        current = node;
+    }
 
-    removeDuplicates(&head);
+    SplitByParity(&A, &B);
 
-    printf("List after removing duplicates: ");
-    printList(head);
+    // 输出结果
+    printf("链表A (奇数): ");
+    current = A->next;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
 
-    freeList(head);
+    printf("链表B (偶数): ");
+    current = B->next;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+
+    // 释放链表
+    freeList(A);
+    freeList(B);
 
     return 0;
 }

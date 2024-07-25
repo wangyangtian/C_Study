@@ -228,7 +228,7 @@ LinkList List_HeadInsert(LinkList L){
     printf("头插法建立单链表,输入值(9999结束)\n");
     do
     {
-        printf("输入第%d个数据:", j);
+        printf("输入第%d个数据:", j++);
         scanf("%d", &x);
         if(x!=9999){
             LNode* s=(LNode*)malloc(sizeof(LNode));
@@ -244,7 +244,7 @@ LinkList List_HeadInsert(LinkList L){
 }
 
 // 打印链表
-void printList(LinkList L) {
+void PrintList(LinkList L) {
     LNode* temp = L->next;  // 跳过头节点
     while (temp != NULL) {
         printf("%d -> ", temp->data);
@@ -263,7 +263,75 @@ void freeList(LinkList L) {
     }
 }
 
+bool DeleteDuplicates(LinkList* L){
+    if((*L)->next==NULL||(*L)==NULL)    return false;   //链表为空或者只有一个元素返回false
+    LNode* temp=(*L)->next;
+    while (temp->next!=NULL)
+    {
+        if(temp->data==temp->next->data)
+            DeleteNode(temp);   //删除重复元素中的前一个
+        else 
+            temp=temp->next;    //如果不是重复元素，跳到下一个
+    }
+    return true;
+}
 
+bool DeleteMin(LinkList L){
+    if(L==NULL)    return false;
+    LNode* Current,*MinP;
+    MinP=Current=L->next;
+    while(Current!=NULL)
+    {
+        if(Current->data<MinP->data)
+            MinP=Current;
+        Current=Current->next;
+    }
+    DeleteNode(MinP);
+    return true;
+}
+
+bool InplaceReverse(LinkList *L){
+    if((*L)==NULL||(*L)->next==NULL)  return false;
+    LNode *current;
+    current=(*L)->next;
+    (*L)->next=NULL;
+    while (current!=NULL) 
+    {
+        LNode* temp=current->next;
+        current->next=(*L)->next;
+        (*L)->next=current;
+        current=temp;
+    }
+}
+
+bool SplitByParity(LinkList *A,LinkList *B){
+    LNode *pAL=(*A)->next;
+    LNode *pAR=(*A)->next;
+    LNode *pB=*B;
+    if((*A)->next==NULL)    return false;
+    if((*B)->next!=NULL)    freeList(*B);
+    while (pAR!=NULL)
+    {
+        if((pAR->data%2!=0)&&(pAL==pAR))
+        {
+            pAR=pAR->next;
+        }
+        else if((pAR->data%2!=0)&&(pAL!=pAR))
+        {
+            pAR=pAR->next;
+            pAL=pAL->next;
+        }
+        else
+        {
+            pAL->next=pAR->next;
+            pAR->next=NULL;
+            pB->next=pAR;
+            pB=pB->next;
+            pAR=pAL->next;
+        }     
+    } 
+    return true;
+}
 int main()
 {
     LinkList L;
@@ -304,8 +372,14 @@ int main()
 
     // int length =Length(L);
     // printf("表长为%d\n",length);
-    List_HeadInsert(L);
-    printList(L);
+    List_TailInsert(L);
+    PrintList(L);
+    //DeleteDuplicates(&L);
+    //PrintList(L);
+    //DeleteMin(L);
+    //PrintList(L);
+    InplaceReverse(&L);
+    PrintList(L);
     freeList(L);
     return 0;
 }
