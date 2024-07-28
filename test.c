@@ -1,67 +1,80 @@
 #include <stdio.h>
-#include <stdbool.h>
+#include <ctype.h>
 #include <stdlib.h>
 
-#define MAXSIZE 100
+#define MAX 100
 
 typedef struct {
-    char data[MAXSIZE];
+    int data[MAX];
     int top;
-} SqStack;
+} Stack;
 
-void InitStack(SqStack* S) {
-    S->top = -1;
+void initStack(Stack *s) {
+    s->top = -1;
 }
 
-bool EmptyStack(SqStack S) {
-    return S.top == -1;
+int isEmpty(Stack *s) {
+    return s->top == -1;
 }
 
-bool Push(SqStack* S, char e) {
-    if (S->top == MAXSIZE - 1) return false; // 栈满
-    S->data[++(S->top)] = e;
-    return true;
+int isFull(Stack *s) {
+    return s->top == MAX - 1;
 }
 
-bool Pop(SqStack* S, char* e) {
-    if (EmptyStack(*S)) return false; // 栈空
-    *e = S->data[(S->top)--];
-    return true;
+void push(Stack *s, int value) {
+    if (!isFull(s)) {
+        s->data[++(s->top)] = value;
+    } else {
+        printf("栈满\n");
+    }
 }
 
-bool BracketCheck(char* str) {
-    SqStack S;
-    InitStack(&S);
+int pop(Stack *s) {
+    if (!isEmpty(s)) {
+        return s->data[(s->top)--];
+    } else {
+        printf("栈空\n");
+        return -1; // 栈空时返回 -1
+    }
+}
+
+int EvaluatePostfix(char *postfix) {
+    Stack s;
+    initStack(&s);
     int i = 0;
-    while (str[i] != '\0') {
-        if (str[i] == '(' || str[i] == '[' || str[i] == '{') {
-            Push(&S, str[i]);
+    while (postfix[i] != '\0') {
+        if (isdigit(postfix[i])) {
+            push(&s, postfix[i] - '0'); // 将字符转换为整数
         } else {
-            if (EmptyStack(S)) return false;
-
-            char topelem;
-            Pop(&S, &topelem);
-            if (topelem == '(' && str[i] != ')') return false;
-            if (topelem == '[' && str[i] != ']') return false;
-            if (topelem == '{' && str[i] != '}') return false;
+            int Rnum = pop(&s);
+            int Lnum = pop(&s);
+            int result;
+            switch (postfix[i]) {
+                case '+':
+                    result = Lnum + Rnum;
+                    break;
+                case '-':
+                    result = Lnum - Rnum;
+                    break;
+                case '*':
+                    result = Lnum * Rnum;
+                    break;
+                case '/':
+                    result = Lnum / Rnum;
+                    break;
+                default:
+                    printf("无效的运算符: %c\n", postfix[i]);
+                    return -1; // 遇到无效运算符时返回 -1
+            }
+            push(&s, result);
         }
         i++;
     }
-    return EmptyStack(S);
+    return pop(&s);
 }
 
 int main() {
-    char* test1 = "{[()]}";
-    char* test2 = "{[(])}";
-    char* test3 = "{[}";
-    char* test4 = "";
-    char* test5 = "({[()]})";
-
-    printf("Test 1: %s - %s\n", test1, BracketCheck(test1) ? "Valid" : "Invalid");
-    printf("Test 2: %s - %s\n", test2, BracketCheck(test2) ? "Valid" : "Invalid");
-    printf("Test 3: %s - %s\n", test3, BracketCheck(test3) ? "Valid" : "Invalid");
-    printf("Test 4: %s - %s\n", test4, BracketCheck(test4) ? "Valid" : "Invalid");
-    printf("Test 5: %s - %s\n", test5, BracketCheck(test5) ? "Valid" : "Invalid");
-
+    char postfix[] = "21+32*1-*";
+    printf("结果是 %d\n", EvaluatePostfix(postfix));
     return 0;
 }
