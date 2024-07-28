@@ -60,10 +60,36 @@ bool GetTop(SqStack *S, int *top)
     return true;
 }
 
+bool BracketCheck(char* str){
+    SqStack S;
+    InitStack(&S);
+    int i=0;
+    while (str[i]!='\0')
+    {
+        if(str[i]=='('||str[i]=='['||str[i]=='{')
+            Push(&S,str[i]);
+        else
+        {
+            if(EmptyStack(S))   return false;
+
+            char topelem;
+            Pop(&S,&topelem);
+            if(topelem!='('&&str[i]==')')   return false;
+            if(topelem!='['&&str[i]==']')   return false;
+            if(topelem!='{'&&str[i]=='}')   return false;
+        }
+        i++;
+    }
+    
+    return EmptyStack(S);
+}
+
+
 int main()
 {
     SqStack S;
     InitStack(&S); // 初始化栈
-
+    char str[]="{()}[]()";
+    printf("%d",BracketCheck(str));
     return 0;
 }
