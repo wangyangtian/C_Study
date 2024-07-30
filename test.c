@@ -1,80 +1,58 @@
 #include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
+#include <stdbool.h>
+#define MAXLEN 100
 
-#define MAX 100
+typedef struct string {
+    char ch[MAXLEN];
+    int length;
+} SString;
 
-typedef struct {
-    int data[MAX];
-    int top;
-} Stack;
-
-void initStack(Stack *s) {
-    s->top = -1;
-}
-
-int isEmpty(Stack *s) {
-    return s->top == -1;
-}
-
-int isFull(Stack *s) {
-    return s->top == MAX - 1;
-}
-
-void push(Stack *s, int value) {
-    if (!isFull(s)) {
-        s->data[++(s->top)] = value;
-    } else {
-        printf("栈满\n");
-    }
-}
-
-int pop(Stack *s) {
-    if (!isEmpty(s)) {
-        return s->data[(s->top)--];
-    } else {
-        printf("栈空\n");
-        return -1; // 栈空时返回 -1
-    }
-}
-
-int EvaluatePostfix(char *postfix) {
-    Stack s;
-    initStack(&s);
-    int i = 0;
-    while (postfix[i] != '\0') {
-        if (isdigit(postfix[i])) {
-            push(&s, postfix[i] - '0'); // 将字符转换为整数
-        } else {
-            int Rnum = pop(&s);
-            int Lnum = pop(&s);
-            int result;
-            switch (postfix[i]) {
-                case '+':
-                    result = Lnum + Rnum;
-                    break;
-                case '-':
-                    result = Lnum - Rnum;
-                    break;
-                case '*':
-                    result = Lnum * Rnum;
-                    break;
-                case '/':
-                    result = Lnum / Rnum;
-                    break;
-                default:
-                    printf("无效的运算符: %c\n", postfix[i]);
-                    return -1; // 遇到无效运算符时返回 -1
-            }
-            push(&s, result);
-        }
+//字符串比较
+int StrCompare(SString s1, SString s2) {
+    int i = 1; // 从1开始
+    while (i <= s1.length && i <= s2.length && s1.ch[i] == s2.ch[i]) {
         i++;
     }
-    return pop(&s);
+    if (i > s1.length && i > s2.length) {
+        return 0; // 两个字符串完全相同
+    }
+    if (i <= s1.length && i <= s2.length) {
+        return s1.ch[i] - s2.ch[i];
+    }
+    return s1.length - s2.length;
+}
+
+//取出字符串S中位置在pos长度为len的子串
+bool SubString(SString *sub, SString S, int pos, int len) {
+    if (pos + len - 1 > S.length) {
+        return false;
+    }
+    for (int i = 0; i < len; i++) {
+        sub->ch[i + 1] = S.ch[pos + i];
+    }
+    sub->length = len;
+    sub->ch[len + 1] = '\0'; // 以'\0'结尾
+    return true;
+}
+
+//判断T是否为S的子串，如果是，返回子串开始位置
+int Index(SString S, SString T) {
+    SString sub;
+    int len_s = S.length, len_t = T.length;
+    for (int i = 1; i <= len_s - len_t + 1; i++) {
+        if (SubString(&sub, S, i, len_t)) {
+            if (StrCompare(sub, T) == 0) {
+                return i; // 找到子串，返回起始位置
+            }
+        }
+    }
+    return -1; // 未找到子串
 }
 
 int main() {
-    char postfix[] = "21+32*1-*";
-    printf("结果是 %d\n", EvaluatePostfix(postfix));
+    SString s1 = {" hello", 5}; // 第一个元素空出，从1开始
+    SString s2 = {" ll", 2};    // 第一个元素空出，从1开始
+    int result = Index(s1, s2);
+    printf("Result: %d\n", result);
     return 0;
 }
