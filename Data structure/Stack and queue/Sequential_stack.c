@@ -16,7 +16,7 @@ void InitStack(SqStack *S)
     (*S).top = -1; // 初始化栈顶指针
 }
 
-bool EmptyStack(SqStack S)
+bool IsEmpty(SqStack S)
 {
     if (S.top == -1)
     {
@@ -30,6 +30,9 @@ bool EmptyStack(SqStack S)
     }
 }
 
+void destroyStack(SqStack *s) {
+    s->top = -1;
+}
 // 压栈操作
 bool Push(SqStack *S, int elem)
 {
@@ -52,6 +55,16 @@ bool Pop(SqStack *S, int *elem)
     return true;                 // 出栈成功
 }
 
+// 清空栈
+void ClearStack(SqStack *s) {
+    s->top = -1;
+}
+
+// 销毁栈（重置栈）
+void DestroyStack(SqStack *s) {
+    s->top = -1;
+}
+
 bool GetTop(SqStack *S, int *top)
 {
     if (S->top == -1)
@@ -60,6 +73,17 @@ bool GetTop(SqStack *S, int *top)
     return true;
 }
 
+// 打印栈元素
+void PrintStack(SqStack *s) {
+    if (IsEmpty(*s)) {
+        printf("Stack is empty.\n");
+    } else {
+        for (int i = 0; i <= s->top; i++) {
+            printf("%c", s->data[i]);
+        }
+        printf("\n");
+    }
+}
 bool BracketCheck(char* str){
     SqStack S;
     InitStack(&S);
@@ -70,7 +94,7 @@ bool BracketCheck(char* str){
             Push(&S,str[i]);
         else
         {
-            if(EmptyStack(S))   return false;
+            if(IsEmpty(S))   return false;
 
             char topelem;
             Pop(&S,&topelem);
@@ -81,9 +105,50 @@ bool BracketCheck(char* str){
         i++;
     }
     
-    return EmptyStack(S);
+    return IsEmpty(S);
 }
 
+
+void LineEdit() {
+    SqStack s;
+    InitStack(&s);
+    char ch;
+
+    printf("Enter text (use '#' to delete last character, '@' to clear the stack, and EOF to end):\n");
+    
+    while ((ch = getchar()) != EOF) {
+        if (ch == '\n') {
+            PrintStack(&s);  // 打印栈的内容作为测试
+            ClearStack(&s);
+        } else if (ch == '#') {
+            char temp;
+            Pop(&s, &temp);
+        } else if (ch == '@') {
+            ClearStack(&s);
+        } else {
+            Push(&s, ch);
+        }
+    }
+}
+
+void DecimalToOctal(int decimal) {
+    SqStack stack;
+    InitStack(&stack);
+    
+    while (decimal != 0) {
+        int remainder = decimal % 8;
+        Push(&stack, remainder);
+        decimal = decimal / 8;
+    }
+    
+    printf("八进制数为：");
+    while (!IsEmpty(stack)) {
+        int elem;
+        Pop(&stack, &elem);
+        printf("%d", elem);
+    }
+    printf("\n");
+}
 
 int main()
 {

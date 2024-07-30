@@ -1,159 +1,91 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdbool.h>
-#define MAX 100
 
-typedef struct
-{
-    int top;
-    char items[MAX];
-} Stack;
+#define MAXSIZE 1024  // 定义栈中元素的最大个数
 
-void initStack(Stack *s)
-{
+typedef struct Sequential_stack {
+    char data[MAXSIZE];  // 静态数组存放栈中元素
+    int top;             // 栈顶指针
+} SqStack;
+
+// 初始化栈
+void InitStack(SqStack* s) {
     s->top = -1;
 }
 
-int isEmpty(Stack *s)
-{
+// 判断栈是否为空
+int IsEmpty(SqStack* s) {
     return s->top == -1;
 }
 
-int isFull(Stack *s)
-{
-    return s->top == MAX - 1;
+// 判断栈是否满
+int IsFull(SqStack* s) {
+    return s->top == MAXSIZE - 1;
 }
 
-void push(Stack *s, char c)
-{
-    if (isFull(s))
-    {
-        printf("Stack is full!\n");
-        return;
+// 压入元素到栈
+int Push(SqStack* s, char elem) {
+    if (IsFull(s)) {
+        printf("Stack is full.\n");
+        return 0;
     }
-    s->items[++(s->top)] = c;
+    s->data[++s->top] = elem;
+    return 1;
 }
 
-char pop(Stack *s)
-{
-    if (isEmpty(s))
-    {
-        printf("Stack is empty!\n");
-        return '\0';
+// 弹出栈顶元素
+int Pop(SqStack* s, char* elem) {
+    if (IsEmpty(s)) {
+        printf("Stack is empty.\n");
+        return 0;
     }
-    return s->items[(s->top)--];
+    *elem = s->data[s->top--];
+    return 1;
 }
 
-char peek(Stack *s)
-{
-    if (isEmpty(s))
-    {
-        return '\0';
-    }
-    return s->items[s->top];
+// 清空栈
+void ClearStack(SqStack* s) {
+    s->top = -1;
 }
 
-bool IsOperator(char c){
-    if(c=='+'||c=='-'||c=='*'||c=='/'||c=='^')
-        return true;
-    else
-        return false;
-}
-
-int precedence(char op){
-    if(op=='+'||op=='-')
-        return 1;
-    else if(op=='*'||op=='/')
-        return 2;
-    else if(op=='^')
-        return 3;
-    return 0;
-}
-
-void infixToPostfix(char* infix, char* postfix){
-    Stack s;
-    initStack(&s);
-    int i=0,j=0;
-    while (infix[i]!='\0')
-    {
-        if(isdigit(infix[i])||isalpha(infix[i]))
-            postfix[j++]=infix[i];
-        else if (infix[i]=='(')
-        {
-            push(&s,infix[i]);
+// 打印栈元素
+void PrintStack(SqStack* s) {
+    if (IsEmpty(s)) {
+        printf("Stack is empty.\n");
+    } else {
+        for (int i = 0; i <= s->top; i++) {
+            printf("%c", s->data[i]);
         }
-        else if (infix[i]==')')
-        {
-            while (!isEmpty(&s)&&peek(&s)!='(')
-            {
-                postfix[j++]=pop(&s);
-            }
-            pop(&s);//删除'('
-        }
-        else if(IsOperator(infix[i])){
-            while (!isEmpty(&s)&&precedence(peek(&s))>=precedence(infix[i]))
-            {
-                postfix[j++]=pop(&s);
-            }
-            push(&s,infix[i]);
-        }
-        i++; 
+        printf("\n");
     }
-    while (!isEmpty(&s))
-    {
-        postfix[j++]=pop(&s);
-    }
-    postfix[j]='\0';
 }
 
-int EvaluatePostfix(char *postfix){
-    Stack s;
-    initStack(&s);
-    int i=0;
-    while (postfix[i]!='\0')
-    {
-        if(isdigit(postfix[i])){
-            push(&s,postfix[i]='0');
+// 处理输入行
+void process_input(char* input) {
+    SqStack stack;
+    InitStack(&stack);
+    char elem;
+
+    for (int i = 0; input[i] != '\0'; ++i) {
+        if (input[i] == '#') {
+            Pop(&stack, &elem);
+        } else if (input[i] == '@') {
+            ClearStack(&stack);
+        } else {
+            Push(&stack, input[i]);
         }
-        else
-        {
-            char Rnum=pop(&s);
-            char Lnum=pop(&s);
-            double result;
-            switch (postfix[i])
-            {
-            case '+':
-                result=Lnum+Rnum;
-                break;
-            case '-':
-                result=Lnum-Rnum;
-                break;
-            case '*':
-                result=Lnum*Rnum;
-                break;
-            case '/':
-                result=Lnum/Rnum;
-                break;                
-            default:
-                break;
-            }
-            push(&s, result);            
-        }
-        i++;
     }
-    return pop(&s); 
+    PrintStack(&stack);
 }
 
 int main() {
-    char infix[MAX] = "a+b*(c^d-e)^(f+g*h)-i";
-    char postfix[MAX];
+    char buffer[MAXSIZE];
 
-    infixToPostfix(infix, postfix);
-    printf("Infix Expression: %s\n", infix);
-    printf("Postfix Expression: %s\n", postfix);
-    char test[]="21+32*1-*";
-    printf("%d\n",EvaluatePostfix(test));
+    printf("请输入文本（按 Ctrl+Z 结束）：\n");
+
+    while (fgets(buffer, MAXSIZE, stdin) != NULL) {
+        process_input(buffer);
+    }
+
     return 0;
 }
