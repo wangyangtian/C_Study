@@ -1,87 +1,35 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
-typedef struct CircularQueue
-{
-    int data;
-    struct CircularQueue *next;
-    struct CircularQueue *prior;
-}CQNode;
+typedef struct {
+    char ch[100];  // 假设最大长度为100
+    int length;    // 实际字符串长度
+} SString;
 
-typedef struct 
-{
-    CQNode *front;
-    CQNode *rear;
-}CQueue;
-
-void InitQueue(CQueue *cq){
-    cq->front=cq->rear=(CQNode*)malloc(sizeof(CQNode));
-    cq->front->next=cq->front;
-    cq->front->prior=cq->rear;
-}
-
-void TailDelete(CQueue *cq,int *x){
-    if (cq->rear == cq->front) return;  // 队列为空
-    CQNode *p=cq->rear;
-    *x = p->data;
-    p->prior->next=p->next;
-    p->next->prior=p->prior;
-    cq->rear=p->prior;
-    free(p);
-}
-
-void HeadInsert(CQueue *cq,int x){
-    CQNode * q=(CQNode*)malloc(sizeof(CQNode));
-    q->data=x;
-    q->next = cq->front->next;
-    cq->front->next->prior = q;
-    cq->front->next = q;
-    q->prior = cq->front;
-    if (cq->front == cq->rear) {
-        cq->rear = q;  // 插入第一个元素时需要更新rear
-    }    
-}
-
-int main() {
-    CQueue cq;
-    InitQueue(&cq);
-
-    // 测试从队头插入操作
-    printf("HeadInsert 1\n");
-    HeadInsert(&cq, 1);
-    printf("HeadInsert 2\n");
-    HeadInsert(&cq, 2);
-    printf("HeadInsert 3\n");
-    HeadInsert(&cq, 3);
-
-    // 打印队列状态
-    CQNode *p = cq.front->next;
-    printf("Queue elements after HeadInsert: ");
-    while (p != cq.front) {
-        printf("%d ", p->data);
-        p = p->next;
+int Index_2(SString s, SString t) {
+    int i = 1;  // 从1开始
+    int j = 1;  // 从1开始
+    while (i <= s.length) {  // 修改循环条件，确保能够匹配到最后一个可能的位置
+        if (s.ch[i] == t.ch[j]) {
+            i++;
+            j++;
+            if (j > t.length)  // j超过模式串长度时匹配成功
+                return i - t.length;
+        } else {
+            i = i - j + 2;  // i回退到下一起始位置
+            j = 1;          // j重置为1
+        }
     }
-    printf("\n");
-
-    // 测试从队尾删除操作
-    int x;
-    printf("TailDelete\n");
-    TailDelete(&cq, &x);
-    printf("Deleted: %d\n", x);
-    printf("TailDelete\n");
-    TailDelete(&cq, &x);
-    printf("Deleted: %d\n", x);
-    printf("TailDelete\n");
-    TailDelete(&cq, &x);
-    printf("Deleted: %d\n", x);
-
-    // 检查队列是否为空
-    if (cq.front == cq.rear && cq.front->next == cq.front) {
-        printf("Queue is empty\n");
-    } else {
-        printf("Queue is not empty\n");
-    }
-
     return 0;
 }
 
+int main() {
+    // 初始化字符串，并手动设置第一个元素为空格
+    SString s1 = {" llo", 3};
+    SString s2 = {" hedddddddllo", 12};
+
+
+    int result = Index_2(s2, s1);
+    printf("Result: %d\n", result);  // 应该输出3
+    return 0;
+}

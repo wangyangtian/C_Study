@@ -50,10 +50,27 @@ int Index(SString S,SString T){
     return -1;
 }
 
+int Index_2(SString s, SString t) {
+    int i = 1;  // 从1开始
+    int j = 1;  // 从1开始
+    while (i <= s.length - t.length + 1) {  // 修改循环条件，确保能够匹配到最后一个可能的位置
+        if (s.ch[i] == t.ch[j]) {
+            i++;
+            j++;
+            if (j > t.length)  // j超过模式串长度时匹配成功
+                return i - t.length;
+        } else {
+            i = i - j + 2;  // i回退到下一起始位置
+            j = 1;          // j重置为1
+        }
+    }
+    return 0;
+}
+
 int main() {
     SString s1 = {" llo", 3};
     SString s2 = {" hello", 5};
-    int result = Index(s1, s2);
+    int result = Index_2(s2, s1);
     printf("Result: %d\n", result);
     return 0;
 }
