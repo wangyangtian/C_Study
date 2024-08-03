@@ -4,6 +4,13 @@
         "stdlib.h": "c",
         "stdio.h": "c",
         "xutility": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "string.h": "c",
+        "atomic": "c",
+        "xlocale": "c",
+        "charconv": "c",
+        "*.rh": "c",
+        "mutex": "c",
+        "xiosbase": "c"
     }
 }

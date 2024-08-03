@@ -16,15 +16,11 @@ void InitStack(SqStack *S)
     (*S).top = -1; // 初始化栈顶指针
 }
 
-bool IsEmpty(SqStack S)
-{
-    if (S.top == -1)
-    {
+bool IsEmpty(SqStack S) {
+    if (S.top == -1) {
         printf("栈空！");
         return true;
-    }
-    else
-    {
+    } else {
         printf("非空栈！");
         return false;
     }
