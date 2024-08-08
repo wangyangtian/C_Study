@@ -11,6 +11,14 @@
         "charconv": "c",
         "*.rh": "c",
         "mutex": "c",
-        "xiosbase": "c"
+        "xiosbase": "c",
+        "cstring": "c",
+        "format": "c",
+        "system_error": "c",
+        "xlocbuf": "c",
+        "xlocinfo": "c",
+        "xlocmon": "c",
+        "xmemory": "c",
+        "xstring": "c"
     }
 }

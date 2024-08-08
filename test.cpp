@@ -1,48 +1,33 @@
 #include <iostream>
+#include <queue>
+
 using namespace std;
 
-struct SString {
-    char ch[100];  // 假设最大长度为100
-    int length;    // 实际字符串长度
-};
-
-int Index_2(SString s, SString t) {
-    int i = 1;  // 从1开始
-    int j = 1;  // 从1开始
-    while (i <= s.length - t.length + 1) {  // 修改循环条件，确保能够匹配到最后一个可能的位置
-        if (s.ch[i] == t.ch[j]) {
-            i++;
-            j++;
-            if (j > t.length)  // j超过模式串长度时匹配成功
-                return i - t.length;
-        } else {
-            i = i - j + 2;  // i回退到下一起始位置
-            j = 1;          // j重置为1
-        }
-    }
-    return 0;
-}
-
 int main() {
-    // 测试用例1
-    SString s1 = {{' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}, 8}; // 注意第一个位置是空格
-    SString t1 = {{' ', 'd', 'e', 'f'}, 3};
-    cout << "Index: " << Index_2(s1, t1) << endl; // 应该输出4
+    queue<int> q;
+    int n, m;
+    n = 11;  // 共11个人  
+    m = 3;   // 数到3，出队！
 
-    // 测试用例2
-    SString s2 = {{' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}, 8}; // 注意第一个位置是空格
-    SString t2 = {{' ', 'a', 'b', 'c'}, 3};
-    cout << "Index: " << Index_2(s2, t2) << endl; // 应该输出1
+    for (int i = 1; i <= n; ++i) {
+        q.push(i);
+    }
+    printf("初始化队列后，队头编号=%d\n", q.front());
 
-    // 测试用例3
-    SString s3 = {{' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}, 8}; // 注意第一个位置是空格
-    SString t3 = {{' ', 'h'}, 1};
-    cout << "Index: " << Index_2(s3, t3) << endl; // 应该输出8
-
-    // 测试用例4
-    SString s4 = {{' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}, 8}; // 注意第一个位置是空格
-    SString t4 = {{' ', 'i'}, 1};
-    cout << "Index: " << Index_2(s4, t4) << endl; // 应该输出0，因为没有匹配
-
+    // 从1开始报数
+    int cnt = 1;
+    while (!q.empty()) {
+        if (cnt % m == 0) {
+            // 点到这个人了
+            printf("cnt=%d, 出队编号=%d, 还剩人数=%d\n", cnt, q.front(),
+                   q.size() - 1);
+            q.pop();
+        } else {
+            // 没点到，就把队头放到队尾，就当是循环队列了
+            q.push(q.front());
+            q.pop();
+        }
+        cnt++;
+    }
     return 0;
 }
