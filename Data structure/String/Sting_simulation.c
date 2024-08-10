@@ -29,6 +29,7 @@ void* MyMemmove(void* dest, const void* src, size_t n) {
             *(--d) = *(--s);
         }
     }
+    return dest;
 }
 
 char* MyStrcpy(char* dest, const char* src) {
@@ -114,6 +115,24 @@ const char* MyStrstr(const char* haystack, const char* needle) {
     return NULL;  // No match found
 }
 
+/**
+ * @brief 查找字符在字符串中首次出现的位置
+ *
+ * @param str 输入字符串
+ * @param ch 查找的字符
+ * @return char* 返回字符首次出现的位置，如果未找到则返回NULL。
+ */
+
+char* MyStrchr(const char* str, int ch) {
+    while (*str) {
+        if (*str == ch) {
+            return (char*)str;
+        }
+        str++;
+    }
+    return NULL;
+}
+
 static char* _strtok = NULL;
 
 
@@ -164,26 +183,15 @@ char* MyStrtok(char* s, const char* delim) {
     return sbegin;
 }
 
-/**
- * @brief 查找字符在字符串中首次出现的位置
- *
- * @param str 输入字符串
- * @param ch 查找的字符
- * @return char* 返回字符首次出现的位置，如果未找到则返回NULL。
- */
-char* MyStrchr(const char* str, int ch) {
-    while (*str) {
-        if (*str == ch) {
-            return (char*)str;
-        }
-        str++;
-    }
-    return NULL;
-}
-
 int main() {
-    char str1[] = "Hello, World";
-    char str2[] = "W";
-    printf("%c\n", *MyStrstr(str1, str2));
+    char str[] = "Hello, World! Welcome to C programming.";
+    char *delim = " ,.!";
+
+    char *token = MyStrtok(str, delim);
+    while (token != NULL) {
+        printf("%s\n", token);
+        token = MyStrtok(NULL, delim);
+    }
+
     return 0;
 }
