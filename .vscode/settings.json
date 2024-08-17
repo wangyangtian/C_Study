@@ -19,6 +19,15 @@
         "xlocinfo": "c",
         "xlocmon": "c",
         "xmemory": "c",
-        "xstring": "c"
+        "xstring": "c",
+        "algorithm": "c",
+        "optional": "c",
+        "type_traits": "c",
+        "xtr1common": "c",
+        "array": "c",
+        "deque": "c",
+        "queue": "c",
+        "span": "c",
+        "vector": "c"
     }
 }

@@ -25,15 +25,15 @@ void InitQueue(LinkQueue *q){
 //     q->rear=NULL;
 // }
 
-// bool ISEmpty(LinkQueue *q){
-//     if(q->front==q->rear)   return true;
-//     else                    return false;
-// }
-
-bool IsEmpty(LinkQueue *q){
-    if(q->front==NULL)  return true;
-    else                return false;
+bool ISEmpty(LinkQueue *q){
+    if(q->front==q->rear)   return true;
+    else                    return false;
 }
+
+// bool IsEmpty(LinkQueue *q){
+//     if(q->front==NULL)  return true;
+//     else                return false;
+// }
 
 void EnQueue(LinkQueue *q,int elem){//带头结点入队
     LinkNode *s=(LinkNode*)malloc(sizeof(LinkNode));
@@ -61,7 +61,7 @@ void EnQueue(LinkQueue *q,int elem){//不带头结点入队
 bool DeQueue(LinkQueue *q,int *elem){//带头结点的出队
     if(q->front==q->rear)   return false;
     LinkNode *p=q->front->next;
-    elem=p->data;
+    *elem=p->data;
     q->front->next=p->next;
     if(q->rear==p)  q->rear=q->front;   //最后一次出队，修改rear指针
     free(p);
