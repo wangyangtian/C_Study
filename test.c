@@ -1,162 +1,132 @@
-#include <ctype.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#define MAXSIZE 100
-double ArrMax(double* arr, int n) {
-    if (n == 1)
-        return arr[0];
-    else {
-        float max = ArrMax(arr, n - 1);
-        return arr[n - 1] > max ? arr[n - 1] : max;
-    }
-}
+// 定义二叉树的结点结构
+typedef struct BiTNode {
+    int data;
+    struct BiTNode *lchild, *rchild;
+} BiTNode, *BiTree;
 
-double ArrSum(double* arr, int n) {
-    if (n == 1)
-        return arr[0];
-    else
-        return ArrSum(arr, n - 1) + arr[n - 1];
-}
+// 定义链栈结构
+typedef struct StackNode {
+    BiTNode* data;
+    struct StackNode *next;
+} StackNode, *LinkStack;
 
-double ArrAvg(double* arr, int n) {
-    if (n == 1)
-        return arr[0];
-    else
-        return ArrSum(arr, n) / n;
-}
+// 定义链队列的结点结构
+typedef struct Linked_queue {
+    BiTNode* data;
+    struct Linked_queue *next;
+} LinkNode;
 
-void OddHead(int* arr, int n) {
-    int temp;
-    for (int i = 0, j = n - 1; i < j;) {
-        if (arr[i] % 2 == 1)
-            i++;
-        if (arr[j] % 2 == 0)
-            j--;
-        temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-        i++;
-        j--;
-    }
-}
-
-void SplitByLast(int* arr, int n) {
-    int i, j;
-    int temp;
-    for (i = 0, j = n - 2; i < j;) {
-        while (arr[i] < arr[n - 1]) {
-            i++;
-        }
-        while (arr[j] > arr[n - 1]) {
-            j--;
-        }
-        temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-        i++;
-        j--;
-    }
-    temp = arr[i];
-    arr[i] = arr[n - 1];
-    arr[n - 1] = temp;
-}
-void FindInMatrix(int arr[][100], int m, int n) {
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            int current = arr[i][j];
-            int rowMax = arr[i][0], rowMin = arr[i][0];
-            for (int k = 1; k < n; k++) {
-                if (arr[i][k] > rowMax)
-                    rowMax = arr[i][k];
-                if (arr[i][k] < rowMin)
-                    rowMin = arr[i][k];
-            }
-            int colMin = arr[0][j], colMax = arr[0][j];
-            for (int k = 1; k < m; k++) {
-                if (arr[k][j] < colMin)
-                    colMin = arr[k][j];
-                if (arr[k][j] > colMax)
-                    colMax = arr[k][j];
-            }
-            if (current == rowMax && current == colMax) {
-                printf("元素(%d,%d)=%d,是行列最大值。\n", i + 1, j + 1,
-                       arr[i][j]);
-            }
-            if (current == rowMin && current == colMin) {
-                printf("元素(%d,%d)=%d,是行列最小值。\n", i + 1, j + 1,
-                       arr[i][j]);
-            }
-        }
-    }
-}
+// 定义链队列结构
 typedef struct {
-    int row;    // 行号
-    int col;    // 列号
-    int value;  // 元素值
-} Triple;
+    LinkNode *front, *rear;
+} LinkQueue;
 
-typedef struct {
-    int rows;              // 矩阵的行数
-    int cols;              // 矩阵的列数
-    int numTerms;          // 矩阵中非零元素的个数
-    Triple data[MAXSIZE];  // 存储非零元素的三元组数组
-} SparseMatrix;
+// 初始化队列
+void InitQueue(LinkQueue *q) {
+    q->front = q->rear = (LinkNode*)malloc(sizeof(LinkNode));
+    q->front->next = NULL;
+}
 
-void create(int A[][MAXSIZE], int m, int n, SparseMatrix* B) {
-    B->rows = m;
-    B->cols = n;
-    B->numTerms = 0;
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            if (A[i][j] != 0) {
-                B->data[B->numTerms].row = i;
-                B->data[B->numTerms].col = j;
-                B->data[B->numTerms].value = A[i][j];
-                B->numTerms++;
-            }
-        }
+// 队列判空
+int IsEmptyQueue(LinkQueue q) {
+    return q.front == q.rear;
+}
+
+// 入队
+void EnQueue(LinkQueue *q, BiTNode* e) {
+    LinkNode *node = (LinkNode*)malloc(sizeof(LinkNode));
+    node->data = e;
+    node->next = NULL;
+    q->rear->next = node;
+    q->rear = node;
+}
+
+// 出队
+int DeQueue(LinkQueue *q, BiTNode **e) {
+    if (IsEmptyQueue(*q))
+        return 0;
+    LinkNode *p = q->front->next;
+    *e = p->data;
+    q->front->next = p->next;
+    if (q->rear == p)
+        q->rear = q->front;
+    free(p);
+    return 1;
+}
+
+// 初始化栈
+void InitStack(LinkStack *s) {
+    *s = NULL;
+}
+
+// 入栈
+void Push(LinkStack *s, BiTNode* e) {
+    StackNode *node = (StackNode*)malloc(sizeof(StackNode));
+    node->data = e;
+    node->next = *s;
+    *s = node;
+}
+
+// 出栈
+int Pop(LinkStack *s, BiTNode **e) {
+    if (*s == NULL)
+        return 0;
+    StackNode *p = *s;
+    *e = p->data;
+    *s = p->next;
+    free(p);
+    return 1;
+}
+
+// 二叉树的自下而上、从右到左的层次遍历
+void LevelOrderTraversal(BiTree root) {
+    if (!root) return;
+    
+    LinkQueue q;
+    InitQueue(&q);
+    LinkStack s;
+    InitStack(&s);
+    EnQueue(&q, root);
+
+    while (!IsEmptyQueue(q)) {
+        BiTNode *node;
+        DeQueue(&q, &node);
+        Push(&s, node);
+        
+        // 先将左子树入队，保证从右到左遍历
+        if (node->lchild)
+            EnQueue(&q, node->lchild);
+        if (node->rchild)
+            EnQueue(&q, node->rchild);
+    }
+
+    // 输出栈中的结点，实现自下而上、从右到左的层次遍历
+    while (Pop(&s, &root)) {
+        printf("%d ", root->data);
     }
 }
 
-void FindX(SparseMatrix* B, int x) {
-    for (int i = 0; i < B->numTerms; i++) {
-        if (x == B->data[i].value) {
-            printf("%d在矩阵%d行%d列。\n", x, B->data[i].col, B->data[i].row);
-        }
-    }
-}
-
-SparseMatrix transpose(SparseMatrix *A){
-    SparseMatrix B;
-    B.cols=A->cols;
-    B.rows=A->rows;
-    B.numTerms=A->numTerms;
-    for(int i=0;i<A->numTerms;i++){
-        B.data[i].col=A->data[i].row;
-        B.data[i].row=A->data[i].col;
-        B.data[i].value=A->data[i].value;
-    }
-    return B;
-}
 int main() {
-    int arr[] = {2, 3, 8, 2, 1, 8, 1, 1};
-    OddHead(arr, 8);
-    for (int i = 0; i < 8; i++) {
-        printf("%d ", arr[i]);
-    }
-    printf("\n");
-    int a1[] = {5, 2, 3, 3, 4, 6, 3, 2, 6, 4};
-    SplitByLast(a1, 10);
-    for (int i = 0; i < 10; i++) {
-        printf("%d ", a1[i]);
-    }
-    printf("\n");
-    int A[100][100] = {{10, 2, 5}, {3, 7, 9}, {8, 6, 4}};
-    int m = 3, n = 3;
+    // 构造一个测试用例
+    BiTNode n1 = {1, NULL, NULL};
+    BiTNode n2 = {2, NULL, NULL};
+    BiTNode n3 = {3, NULL, NULL};
+    BiTNode n4 = {4, NULL, NULL};
+    BiTNode n5 = {5, NULL, NULL};
+    BiTNode n6 = {6, NULL, NULL};
+    BiTNode n7 = {7, NULL, NULL};
 
-    FindInMatrix(A, m, n);
+    n1.lchild = &n2;
+    n1.rchild = &n3;
+    n2.lchild = &n4;
+    n2.rchild = &n5;
+    n3.lchild = &n6;
+    n3.rchild = &n7;
+
+    LevelOrderTraversal(&n1);
+
     return 0;
 }
