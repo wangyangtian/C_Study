@@ -120,7 +120,7 @@ bool DeQueue(LinkQueue* q, BiTree* elem) {  // 带头结点的出队
 }
 
 // 判断队列是否为空
-bool IsEmpty(LinkQueue q) {
+bool IsQueueEmpty(LinkQueue q) {
     return q.front == q.rear;
 }
 
@@ -129,7 +129,7 @@ void LevelOrder(BiTree t) {  // 二叉树的层序遍历
     InitQueue(&q);
     BiTree p;
     EnQueue(&q, t);
-    while (!IsEmpty(q)) {
+    while (!IsQueueEmpty(q)) {
         DeQueue(&q, &p);
         visit(p);
         if (p->lchild != NULL)
@@ -153,7 +153,7 @@ int GetTreeWidth(BiTree t) {
     int maxWidth = 0;   // 用于记录树的最大宽度
 
     // 当队列不为空时，进行循环
-    while (!IsEmpty(q)) {
+    while (!IsQueueEmpty(q)) {
         int nodeCount = 0;  // 用于记录当前层的节点数量
         current = q.front;  // 从队列的头部开始遍历
 
@@ -222,7 +222,7 @@ void LevelOrderRtoL(BiTree t) {  // 二叉树的自下而上、从右到左的�
 
     LinkNode* current;  // 用于遍历当前层的队列节点
     // 当队列不为空时，进行循环
-    while (!IsEmpty(q)) {
+    while (!IsQueueEmpty(q)) {
         int nodeCount = 0;  // 用于记录当前层的节点数量
         current = q.front;  // 从队列的头部开始遍历
 
@@ -254,7 +254,7 @@ int BtDepth(BiTree t) {  // 非递归求二叉树深度
     LinkNode* current;
     int levelCnt = 0;
 
-    while (!IsEmpty(q)) {
+    while (!IsQueueEmpty(q)) {
         int levelNodeCnt = 0;
         current = q.front;
         while (current != NULL) {
@@ -355,6 +355,113 @@ void PostOrderRecursion(BiTree T) {
         visit(p);
     }
 }
+
+// 判断二叉树是否是完全二叉树
+bool IsCompleteBiTree(BiTree t) {
+    // 如果树为空，则是完全二叉树
+    if (!t)
+        return true;
+
+    LinkQueue q;
+    InitQueue(&q);   // 初始化队列
+    EnQueue(&q, t);  // 将根节点入队
+
+    bool HaveNull = false;  // 标记是否遇到空子节点
+
+    while (!IsQueueEmpty(q)) {
+        BiTNode* node;
+        DeQueue(&q, &node);  // 取出当前节点
+
+        // 检查左子节点
+        if (node->lchild) {
+            // 如果之前遇到过空子节点，且现在又有非空左子节点，则树不是完全二叉树
+            if (HaveNull == true)
+                return false;
+            else
+                EnQueue(&q, node->lchild);  // 左子节点入队
+        } else {
+            HaveNull = true;  // 遇到空子节点，标记为true
+        }
+
+        // 检查右子节点
+        if (node->rchild) {
+            // 如果之前遇到过空子节点，且现在又有非空右子节点，则树不是完全二叉树
+            if (HaveNull == true)
+                return false;
+            else
+                EnQueue(&q, node->rchild);  // 右子节点入队
+        } else {
+            HaveNull = true;  // 遇到空子节点，标记为true
+        }
+    }
+
+    // 如果遍历完整个树后没有违反完全二叉树的条件，返回true
+    return true;
+}
+
+// 根据先序遍历数组A和中序遍历数组B，构建二叉树
+BiTree PreInCreate(int* A, int* B, int Al, int Ar, int Bl, int Br) {
+    // A 为先序遍历数组，B 为中序遍历数组
+    // Al 和 Ar 为先序遍历数组中当前子树的起始和结束索引
+    // Bl 和 Br 为中序遍历数组中当前子树的起始和结束索引
+
+    BiTree root = (BiTNode*)malloc(sizeof(BiTNode));
+    root->data = A[Al];  // 先序遍历的第一个元素即为根节点
+
+    // 在中序遍历中找到根节点的位置
+    int i;
+    for (i = Bl; i <= Br; i++) {
+        if (B[i] == root->data) {
+            break;
+        }
+    }
+
+    // 计算左右子树的长度
+    int Llen = i - Bl;
+    int Rlen = Br - i;
+
+    // 递归构建左右子树
+    if (Llen > 0) {
+        root->lchild = PreInCreate(A, B, Al + 1, Al + Llen, Bl, Bl + Llen - 1);
+    } else {
+        root->lchild = NULL;  // 如果左子树长度为0，则该节点没有左孩子
+    }
+    if (Rlen > 0) {
+        root->rchild = PreInCreate(A, B, Ar - Rlen + 1, Ar, Br - Rlen + 1, Br);
+    } else {
+        root->rchild = NULL;  // 如果右子树长度为0，则该节点没有右孩子
+    }
+
+    // 返回构建好的根节点
+    return root;
+}
+
+// 根据后序遍历数组A和中序遍历数组B，构建二叉树
+BiTree PostInCreate(int* A, int* B, int Al, int Ar, int Bl, int Br) {
+    // A 为后序遍历数组，B 为中序遍历数组
+    // Al 和 Ar 为后序遍历数组中当前子树的起始和结束索引
+    // Bl 和 Br 为中序遍历数组中当前子树的起始和结束索引
+    BiTree root = (BiTNode*)malloc(sizeof(BiTNode));
+    root->data = A[Ar];
+    int i;
+    for (i = Bl; i <= Br; i++) {
+        if (B[i] == root->data)
+            break;
+    }
+    int Llen = i - Bl;
+    int Rlen = Br - i;
+    if (Llen)
+        root->lchild = PostInCreate(A, B, Al, Al + Llen - 1, Bl, Bl + Llen - 1);
+    else
+        root->lchild = NULL;
+    if (Rlen)
+        root->rchild = PostInCreate(A, B, Ar - Rlen, Ar - 1, Br - Rlen + 1, Br);
+    else
+        root->rchild = NULL;
+    return root;
+}
+
+
 
 int main() {
     // 创建一个简单的二叉树进行测试
