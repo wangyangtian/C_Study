@@ -1,84 +1,97 @@
 #include <stdio.h>
-#include <limits.h> // 包含INT_MAX用于表示无穷大
+#include <stdlib.h>
 
-#define MAXVERTEXNUM 100
-#define INFINITY INT_MAX // 用于表示无穷大
+#define MAXVERTEXNUM 100 // 最大顶点数
 
-// 图的邻接矩阵定义
 typedef struct {
-    int vexnum;                  // 顶点数
-    int arcnum;                  // 边数
-    int Vex[MAXVERTEXNUM];       // 顶点数组
-    int Edge[MAXVERTEXNUM][MAXVERTEXNUM]; // 邻接矩阵
-} AMGraph;
+    int numVertices; // 顶点数
+    int adjMatrix[MAXVERTEXNUM][MAXVERTEXNUM]; // 邻接矩阵
+} Graph;
 
-// 使用邻接矩阵实现 Prim 算法
-void PrimAM(AMGraph *G, int start) {
-    int lowcost[MAXVERTEXNUM];   // 存储最小代价
-    int closest[MAXVERTEXNUM];   // 存储相应的最小代价边的另一个端点
-    int min, minid;
+// 栈结构，用于存储排序结果
+typedef struct {
+    int data[MAXVERTEXNUM];
+    int top;
+} Stack;
 
-    // 初始化
-    for (int i = 0; i < G->vexnum; i++) {
-        lowcost[i] = G->Edge[start][i];
-        closest[i] = start;
-    }
-    closest[start] = -1;  // 将起点标记为已加入树
-
-    // Prim算法主循环
-    for (int i = 1; i < G->vexnum; i++) {
-        min = INFINITY;
-        minid = -1;
-        // 查找最小代价边
-        for (int j = 0; j < G->vexnum; j++) {
-            if (closest[j] != -1 && lowcost[j] < min) {
-                min = lowcost[j];
-                minid = j;
-            }
-        }
-
-        // 输出最小代价边
-        printf("边: %d - %d, 权值: %d\n", G->Vex[closest[minid]], G->Vex[minid], min);
-
-        // 将新顶点加入树
-        closest[minid] = -1;
-
-        // 更新lowcost和closest数组
-        for (int j = 0; j < G->vexnum; j++) {
-            if (closest[j] != -1 && G->Edge[minid][j] < lowcost[j]) {
-                lowcost[j] = G->Edge[minid][j];
-                closest[j] = minid;
-            }
-        }
-    }
+// 初始化栈
+void initStack(Stack* stack) {
+    stack->top = -1;
 }
 
-int main() {
-    AMGraph g;
-    g.vexnum = 8;  // 设置图的顶点数
-    g.arcnum = 10;  // 设置图的边数
+// 入栈
+void push(Stack* stack, int value) {
+    stack->data[++stack->top] = value;
+}
 
-    // 初始化邻接矩阵
-    for (int i = 0; i < g.vexnum; i++) {
-        g.Vex[i]=i;
-        for (int j = 0; j < g.vexnum; j++) {
-            g.Edge[i][j] = INFINITY;  // 无边的情况
+// 出栈
+int pop(Stack* stack) {
+    if (stack->top == -1) return -1; // 栈空检查
+    return stack->data[stack->top--];
+}
+
+// 检查栈是否为空
+int isEmpty(Stack* stack) {
+    return stack->top == -1;
+}
+
+// DFS 递归函数
+void dfs(int v, int visited[], Stack* stack, Graph* G) {
+    visited[v] = 1; // 标记为已访问
+    for (int i = 0; i < G->numVertices; i++) {
+        // 如果存在边且目标顶点未被访问，递归访问
+        if (G->adjMatrix[v][i] != 0 && !visited[i]) {
+            dfs(i, visited, stack, G);
+        }
+    }
+    push(stack, v); // 当前顶点访问完成后入栈
+}
+
+// 基于 DFS 的拓扑排序
+void topologicalSortDFS(Graph* G) {
+    Stack stack;
+    initStack(&stack);
+
+    int visited[MAXVERTEXNUM] = {0}; // 访问标记数组
+
+    // 对所有顶点执行 DFS
+    for (int i = 0; i < G->numVertices; i++) {
+        if (!visited[i]) {
+            dfs(i, visited, &stack, G);
         }
     }
 
-    // 设置边的权值
-    g.Edge[0][1] = g.Edge[1][0] = 1;
-    g.Edge[0][4] = g.Edge[4][0] = 1;
-    g.Edge[1][5] = g.Edge[5][1] = 1;
-    g.Edge[2][5] = g.Edge[5][2] = 1;
-    g.Edge[5][6] = g.Edge[6][5] = 1;
-    g.Edge[2][3] = g.Edge[3][2] = 1;
-    g.Edge[6][3] = g.Edge[3][6] = 1;
-    g.Edge[7][3] = g.Edge[3][7] = 1;
-    g.Edge[6][7] = g.Edge[7][6] = 1;
-    g.Edge[6][2] = g.Edge[2][6] = 1;
-    // 假设从顶点0开始
-    PrimAM(&g, 0);
+    // 打印拓扑排序结果
+    printf("拓扑排序结果: ");
+    while (!isEmpty(&stack)) {
+        printf("%d ", pop(&stack));
+    }
+    printf("\n");
+}
+
+// 主函数示例
+int main() {
+    Graph G;
+    G.numVertices = 6; // 假设图有 6 个顶点
+    // 初始化邻接矩阵，示例图
+    int adjMatrix[6][6] = {
+        {0, 1, 1, 0, 0, 0},
+        {0, 0, 0, 1, 1, 0},
+        {0, 0, 0, 1, 0, 0},
+        {0, 0, 0, 0, 0, 1},
+        {0, 0, 0, 0, 0, 1},
+        {0, 0, 0, 0, 0, 0}
+    };
+
+    // 将邻接矩阵赋值给图
+    for (int i = 0; i < G.numVertices; i++) {
+        for (int j = 0; j < G.numVertices; j++) {
+            G.adjMatrix[i][j] = adjMatrix[i][j];
+        }
+    }
+
+    // 进行拓扑排序
+    topologicalSortDFS(&G);
 
     return 0;
 }
