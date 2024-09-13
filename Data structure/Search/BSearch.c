@@ -20,6 +20,7 @@ int BSearch_R(int a[], int left, int right, int target) {
 
 int BSearch(int a[],int len,int target){
     int left=0,right=len-1;
+    
     while (left<=right)
     {
         int mid =left+(left+right)/2;
