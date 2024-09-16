@@ -1,0 +1,7 @@
+LINE        #线
+0 0 10 10   #x1 y1 x2 y2
+RECT        #矩形
+10 10 20 20 #x1 y1 width height
+CIRCLE      #圆
+20 20 40    #x1 y1 r
+END

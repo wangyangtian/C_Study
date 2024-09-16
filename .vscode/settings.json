@@ -28,6 +28,8 @@
         "deque": "c",
         "queue": "c",
         "span": "c",
-        "vector": "c"
+        "vector": "c",
+        "cmath": "c",
+        "math.h": "c"
     }
 }

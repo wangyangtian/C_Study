@@ -10,22 +10,19 @@ void Merge(int a[], int low, int mid, int high) {
         b[k] = a[k];
     }
 
-    int i = low, j = mid + 1, k = low;
-
+    int i = low, j = mid + 1;
+    int k = low;
     while (i <= mid && j <= high) {
-        if (b[i] < b[j])
+        if (b[i] <= b[j])
             a[k++] = b[i++];
         else
             a[k++] = b[j++];
     }
-    while (i <= mid) {
+    while (i <= mid)
         a[k++] = b[i++];
-    }
-    while (j <= high) {
+    while (j <= high)
         a[k++] = b[j++];
-    }
-}   
-
+}
 void MergeSort(int a[], int low, int high) {
     if (low < high) {
         int mid = (low + high) / 2;
@@ -38,7 +35,7 @@ void MergeSort(int a[], int low, int high) {
 int main() {
     int a[] = {4, 6, 7, 2, 1, 8};
     MergeSort(a, 0, 5);
-    for (int i = 0; i < 6; i++) {
+    for (int i = 5; i >=0; i--) {
         printf("%d ", a[i]);
     }
     return 0;
