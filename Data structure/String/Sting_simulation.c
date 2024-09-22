@@ -3,6 +3,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int MyAtoi(const char *str){
+    int result=0;
+    int sign=1;
+
+    while(*str==' '){
+        str++;
+    }
+    while(*str=='-'||*str=='+'){
+        sign=(*str=='-')?-1:1;
+        str++;
+    }
+    while(isdigit(*str)){
+        int digit=*str-'0';
+        result=result*10+digit;
+        str++;
+    }
+    return result*sign;
+}
+
+
+
 void* MyMemcpy(void* dest, const void* src, size_t n) {
     char* d = (char*)dest;
     const char* s = (const char*)src;

@@ -33,7 +33,7 @@ char *DeleteStar(char *str){
 
 int main() {
     char a[100];
-    printf("输入字符串");
+    printf("输入字符串:");
     scanf("%s",a);
     DeleteStar(a);
     printf("%s",a);

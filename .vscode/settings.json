@@ -30,6 +30,7 @@
         "span": "c",
         "vector": "c",
         "cmath": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "iterator": "c"
     }
 }
