@@ -1,47 +1,41 @@
 #include <stdio.h>
-#include <math.h>
+#include <string.h>
 
-#define PI 3.14159265358979323846
+// 交换两个字符
+void swap(char* a, char* b) {
+    char temp = *a;
+    *a = *b;
+    *b = temp;
+}
 
-typedef struct Point {
-    double x;
-    double y;
-} Point;
-
-Point forwardIntersection(Point A, Point B, double alpha, double beta) {
-    Point P;
-    
-    // 将角度转换为弧度制
-    alpha = alpha * PI / 180.0;
-    beta = beta * PI / 180.0;
-
-    // 计算 AB 的距离
-    double AB = sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
-
-    // 利用正弦定理计算 PA 和 PB
-    double PA = (AB * sin(beta)) / sin(alpha + beta);
-    double PB = (AB * sin(alpha)) / sin(alpha + beta);
-
-    // 计算向量方向
-    double dx = B.x - A.x;
-    double dy = B.y - A.y;
-
-    // 计算点 P 的坐标 (利用 PA，PB 比例确定 P 在 AB 线上的位置)
-    P.x = A.x + (dx * PA) / AB;
-    P.y = A.y + (dy * PA) / AB;
-
-    return P;
+// 生成所有排列，并输出每种排列作为列车的出站顺序
+void Permute(char* a, int start, int end) {
+    if (start == end) {
+        // 打印当前排列（作为列车出站顺序）
+        for (int i = 0; i <= end-2; i++) {
+            int x1=a[i];
+            for(int j=i+1;j<=end;j++){
+                int x2=a[j];
+                for(int k=j+1;k<=end;k++){
+                    int x3=a[k];
+                    if(x1>x2&&x1>x3&&x2<x3)
+                        return;
+                }
+            }
+        }
+        printf("%s\n",a);
+    } else {
+        for (int i = start; i <= end; i++) {
+            swap(&a[i], &a[start]);   // 交换元素，产生新的排列
+            Permute(a, start + 1, end); // 递归生成后续的排列
+            swap(&a[i], &a[start]);   // 回溯，恢复原来的数组
+        }
+    }
 }
 
 int main() {
-    Point A = {0, 0};  // 已知点 A
-    Point B = {4, 0};  // 已知点 B
-    double alpha = 30; // 角 PAB
-    double beta = 45;  // 角 PBA
-
-    Point P = forwardIntersection(A, B, alpha, beta);
-
-    printf("未知点 P 的坐标: (%.2f, %.2f)\n", P.x, P.y);
-
+    char trains[] = "ABCD"; // 列车编号
+    int n = strlen(trains); // 获取列车数量
+    Permute(trains, 0, n - 1); // 生成列车出站顺序的全排列
     return 0;
 }
