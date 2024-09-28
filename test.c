@@ -1,64 +1,47 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
 
-typedef struct {
-    float x;
-    float y;
+#define PI 3.14159265358979323846
+
+typedef struct Point {
+    double x;
+    double y;
 } Point;
 
-// 判断射线是否与多边形的边相交
-bool isIntersecting(Point p1, Point p2, Point q) {
-    // 确保p1, p2是多边形的一条边，q是要判断的点
-    if (p1.y == p2.y)
-        return false;  // 水平边不可能相交
+Point forwardIntersection(Point A, Point B, double alpha, double beta) {
+    Point P;
+    
+    // 将角度转换为弧度制
+    alpha = alpha * PI / 180.0;
+    beta = beta * PI / 180.0;
 
-    if (q.y < fmin(p1.y, p2.y) || q.y > fmax(p1.y, p2.y))
-        return false;  // 射线没有穿过边
+    // 计算 AB 的距离
+    double AB = sqrt((B.x - A.x) * (B.x - A.x) + (B.y - A.y) * (B.y - A.y));
 
-    float x_intersect = p1.x + (q.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y);
+    // 利用正弦定理计算 PA 和 PB
+    double PA = (AB * sin(beta)) / sin(alpha + beta);
+    double PB = (AB * sin(alpha)) / sin(alpha + beta);
 
-    return x_intersect > q.x;  // 交点在射线右侧
-}
+    // 计算向量方向
+    double dx = B.x - A.x;
+    double dy = B.y - A.y;
 
-// 判断点是否在多边形内部
-bool isPointInsidePolygon(Point polygon[], int n, Point q) {
-    int intersections = 0;
+    // 计算点 P 的坐标 (利用 PA，PB 比例确定 P 在 AB 线上的位置)
+    P.x = A.x + (dx * PA) / AB;
+    P.y = A.y + (dy * PA) / AB;
 
-    for (int i = 0; i < n; i++) {
-        Point p1 = polygon[i];
-        Point p2 = polygon[(i + 1) % n];  // 处理最后一个点与第一个点的连线
-
-        if (isIntersecting(p1, p2, q)) {
-            intersections++;
-        }
-    }
-
-    // 如果交点数量是奇数，点在多边形内部；偶数则在外部
-    return intersections % 2 == 1;
+    return P;
 }
 
 int main() {
-    // 定义一个四边形
-    Point polygon[] = {{1.0, 1.0}, {5.0, 1.0}, {5.0, 5.0}, {1.0, 5.0}};
-    int n = sizeof(polygon) / sizeof(polygon[0]);
+    Point A = {0, 0};  // 已知点 A
+    Point B = {4, 0};  // 已知点 B
+    double alpha = 30; // 角 PAB
+    double beta = 45;  // 角 PBA
 
-    // 定义要检查的点
-    Point q = {3.0, 3.0};   // 内部点
-    Point q2 = {6.0, 3.0};  // 外部点
+    Point P = forwardIntersection(A, B, alpha, beta);
 
-    // 检查点是否在多边形内部
-    if (isPointInsidePolygon(polygon, n, q)) {
-        printf("Point q is inside the polygon.\n");
-    } else {
-        printf("Point q is outside the polygon.\n");
-    }
-
-    if (isPointInsidePolygon(polygon, n, q2)) {
-        printf("Point q2 is inside the polygon.\n");
-    } else {
-        printf("Point q2 is outside the polygon.\n");
-    }
+    printf("未知点 P 的坐标: (%.2f, %.2f)\n", P.x, P.y);
 
     return 0;
 }
