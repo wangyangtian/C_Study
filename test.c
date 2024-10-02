@@ -2,110 +2,97 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
-#define MAXSIZE 100
-
-// 定义一个简单的优先级函数
-int precedence(char op) {
-    if (op == '+' || op == '-') {
-        return 1;
-    }
-    if (op == '*' || op == '/') {
-        return 2;
-    }
-    return 0;
-}
-
-// 执行运算
-int Calculate(int a, int b, char op) {
-    switch (op) {
-        case '+':
-            return a + b;
-        case '-':
-            return a - b;
-        case '*':
-            return a * b;
-        case '/':
-            return a / b;  // 假设输入不会有除以0的情况
-    }
-    return 0;
-}
-
-// 计算中缀表达式的值
-int CalInfix(char* str) {
+// 判断后缀表达式的正确性
+bool isValidPostfix(char* postfix) {
+    int stackCount = 0;  // 用来计数操作数栈的大小
     int i = 0;
-    int StackNum[MAXSIZE];        // 数字栈
-    char StackOp[MAXSIZE];        // 操作符栈
-    int topNum = -1, topOp = -1;  // 栈顶指针
 
-    while (str[i] != '\0') {
-        if (isspace(str[i])) {
+    while (postfix[i] != '\0') {
+        if (isspace(postfix[i])) {  // 跳过空白字符
             i++;
-            continue;  // 跳过空格
+            continue;
         }
 
-        // 如果是数字，压入数字栈
-        if (isdigit(str[i])) {
-            int num = 0;
-            while (isdigit(str[i])) {  // 处理多位数
-                num = num * 10 + (str[i] - '0');
-                i++;
+        if (isdigit(postfix[i])) {  // 如果是操作数，栈大小+1
+            stackCount++;
+            while (isdigit(postfix[i]))
+                i++;                              // 跳过多位数
+        } else if (strchr("+-*/", postfix[i])) {  // 如果是操作符，栈大小-2+1
+            if (stackCount < 2) {
+                return false;  // 操作数不足，表达式无效
             }
-            StackNum[++topNum] = num;  // 压入数字栈
-        }
-
-        // 如果是左括号，直接压入操作符栈
-        else if (str[i] == '(') {
-            StackOp[++topOp] = str[i];
+            stackCount--;  // 两个操作数被一个结果替代
             i++;
+        } else {
+            return false;  // 非法字符
         }
+    }
 
-        // 如果是右括号，则计算直到遇到左括号
-        else if (str[i] == ')') {
-            while (topOp != -1 && StackOp[topOp] != '(') {
-                int b = StackNum[topNum--];
-                int a = StackNum[topNum--];
-                char op = StackOp[topOp--];
-                StackNum[++topNum] = Calculate(a, b, op);  // 计算结果压回数字栈
-            }
-            topOp--;  // 弹出 '('
+    return stackCount == 1;  // 最后栈中应剩下一个操作数
+}
+
+// 将后缀表达式转换为前缀表达式
+char* PostfixToPrefix(char* postfix) {
+    char* stack[100];  // 用来存储前缀表达式片段的栈
+    int top = -1;      // 栈顶指针
+
+    int i = 0;
+    while (postfix[i] != '\0') {
+        if (isspace(postfix[i])) {  // 跳过空白字符
             i++;
+            continue;
         }
 
+        // 如果是操作数，将其压入栈中
+        if (isdigit(postfix[i])) {
+            char* operand = (char*)malloc(2);  // 分配内存给操作数
+            operand[0] = postfix[i++];
+            operand[1] = '\0';     // 结束符
+            stack[++top] = operand;  // 将操作数压入栈
+        }
         // 如果是操作符
-        else if (strchr("+-*/", str[i])) {
-            while (topOp != -1 &&
-                   precedence(StackOp[topOp]) >= precedence(str[i])) {
-                int b = StackNum[topNum--];
-                int a = StackNum[topNum--];
-                char op = StackOp[topOp--];
-                StackNum[++topNum] = Calculate(a, b, op);  // 计算结果压回数字栈
-            }
-            StackOp[++topOp] = str[i];  // 当前操作符压入栈
+        else if (strchr("+-*/", postfix[i])) {
+            // 弹出栈顶的两个操作数
+            char* operand2 = stack[top--];
+            char* operand1 = stack[top--];
+
+            // 构造新的前缀表达式
+            char* expr = (char*)malloc(strlen(operand1) + strlen(operand2) +
+                                       2);  // 为操作符+两个操作数分配空间
+            sprintf(expr, "%c%s%s", postfix[i], operand1, operand2);
+
+            // 释放掉不再需要的操作数内存
+            free(operand1);
+            free(operand2);
+
+            // 将构造好的前缀表达式压回栈中
+            stack[++top] = expr;
             i++;
         }
     }
 
-    // 处理栈中的剩余操作符
-    while (topOp != -1) {
-        int b = StackNum[topNum--];
-        int a = StackNum[topNum--];
-        char op = StackOp[topOp--];
-        StackNum[++topNum] = Calculate(a, b, op);  // 计算结果压回数字栈
-    }
-
-    // 最终结果在数字栈的栈顶
-    return StackNum[topNum];
+    // 栈顶元素即为转换后的前缀表达式
+    return stack[top];
 }
 
 int main() {
-    char expression[MAXSIZE];
+    char postfix[] = "1 3 * 4 +";  // 一个有效的后缀表达式
 
-    printf("请输入中缀表达式（例如3+5*(2-1)）：");
-    fgets(expression, MAXSIZE, stdin);  // 获取用户输入的表达式
+    // 判断后缀表达式的正确性
+    if (isValidPostfix(postfix)) {
+        printf("后缀表达式有效\n");
 
-    int result = CalInfix(expression);  // 计算结果
-    printf("表达式的计算结果为: %d\n", result);
+        // 将后缀表达式转换为前缀表达式
+        char* prefix = PostfixToPrefix(postfix);
+        printf("前缀表达式: %s\n", prefix);
+
+        // 释放前缀表达式的内存
+        free(prefix);
+    } else {
+        printf("后缀表达式无效\n");
+    }
 
     return 0;
 }
