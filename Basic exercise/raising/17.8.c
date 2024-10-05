@@ -12,10 +12,10 @@ int Hight(CSTree t) {
     if (t == NULL)
         return 0;
 
-    int childHeight = Hight(t->firstChild) + 1;  // 计算孩子节点的高度
-    int siblingHeight = Hight(t->nextSibling);   // 计算兄弟节点的高度
+    int CHight = Hight(t->firstChild) + 1;  // 计算孩子节点的高度
+    int SHight = Hight(t->nextSibling);   // 计算兄弟节点的高度
 
-    return childHeight > siblingHeight ? childHeight : siblingHeight;
+    return CHight > SHight ? CHight : SHight;
 }
 
 // 创建一个新节点

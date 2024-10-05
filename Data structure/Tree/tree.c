@@ -99,12 +99,16 @@ void InitQueue(LinkQueue* q) {
     q->front->next = NULL;
 }
 
-void EnQueue(LinkQueue* q, BiTree elem) {  // 带头结点入队
+void EnQueue(LinkQueue* q, BiTNode* elem) {
     LinkNode* s = (LinkNode*)malloc(sizeof(LinkNode));
     s->data = elem;
     s->next = NULL;
-    q->rear->next = s;  // 新结点插入到rear之后
-    q->rear = s;        // 修改表尾指针
+    if (q->rear == NULL) {
+        q->front = q->rear = s;
+    } else {
+        q->rear->next = s;
+        q->rear = s;
+    }
 }
 
 bool DeQueue(LinkQueue* q, BiTree* elem) {  // 带头结点的出队

@@ -23,10 +23,11 @@ BTNode* createNode(int data) {
 }
 
 BTree insertNode(BTree t, int data) {
-    if (t == NULL) {
+    if (t == NULL)
         return createNode(data);
-    }
-    if (data < t->data)
+    if (data == t->data)
+        return t;
+    else if (data < t->data)
         t->lchild = insertNode(t->lchild, data);
     else
         t->rchild = insertNode(t->rchild, data);
@@ -42,20 +43,16 @@ void inOrder(BTree t) {
 }
 
 int main() {
-    BTree root = NULL;
-
-    // 插入节点，构建排序二叉树
-    int data[] = {50, 30, 20, 40, 70, 60, 80};
-    int n = sizeof(data) / sizeof(data[0]);
-
-    for (int i = 0; i < n; i++) {
-        root = insertNode(root, data[i]);
+    BTree t = NULL;
+    int a[] = {1, 4, 6, 3, 6, 2};
+    int i = 0;
+    for (i = 0; i < 6; i++) {
+        t = insertNode(t, a[i]);
     }
 
     // 输出排序二叉树的中序遍历结果
     printf("二叉树的中序遍历: ");
-    inOrder(root);
+    inOrder(t);
     printf("\n");
-
     return 0;
 }
