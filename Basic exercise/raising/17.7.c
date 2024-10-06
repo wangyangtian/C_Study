@@ -21,19 +21,21 @@ int Width(BTree t) {
     int rear = 0, front = 0;
     queue[++rear] = t;
     while(rear!=front){
-        int currentWidth = rear - front;
+        int currentWidth = (rear + MAXSIZE - front) % MAXSIZE;
         maxWidth = maxWidth > currentWidth ? maxWidth : currentWidth;
         while (currentWidth>0)
         {
-            BTNode* temp = queue[++front];
+            front = (++front) % MAXSIZE;
+            BTNode* temp = queue[front];
             currentWidth--;
+            rear = (++rear) % MAXSIZE;
             if(temp->lchild)
-                queue[++rear] = temp->lchild;
+                queue[rear] = temp->lchild;
             if(temp->rchild)
-                queue[++rear]=temp->rchild;
+                queue[rear] = temp->rchild;
         }
     }
-    return Width;
+    return maxWidth;
 }
 
 int main() {
