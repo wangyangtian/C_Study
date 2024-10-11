@@ -4,21 +4,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-void InsertSort(int* A, int n) {
-    int i, j, temp;
+void insertionSort(int arr[], int len) {
+    for (int i = 1; i < len; i++) {
+        int key = arr[i];
+        int j = i - 1;
 
-    for (i = 1; i < n; i++) {
-        if (A[i - 1] > A[i]) {
-            temp = A[i];
-
-            for (j = i - 1; j > +0 && A[j] > temp;j--)// 检查所有前面已排好序的元素
-                A[j + 1] = A[j];                      // 所有大于temp的元素都向后挪位
-
-            A[j + 1] = temp;                          // 复制到插入位置
+        // 将大于key的元素向后移动
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
         }
+        // 将key插入到正确的位置
+        arr[j + 1] = key;
     }
 }
-
 
 // 折半插入排序函数
 void BInsertSort(int *A, int n) {

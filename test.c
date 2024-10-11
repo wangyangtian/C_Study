@@ -1,85 +1,73 @@
-#include <limits.h>
 #include <stdio.h>
-#include <stdlib.h>
 
-typedef struct Huff {
-    int parent;
-    int lchild, rchild;
-    int weight;
-} Huff;
-
-// 初始化哈夫曼树节点
-void Init(Huff* h, int* data, int len) {
-    for (int i = 0; i < len; i++) {
-        h[i].weight = data[i];
-        h[i].parent = h[i].lchild = h[i].rchild = -1;
-    }
-    for (int i = len; i < 2 * len - 1; i++) {
-        h[i].weight = 0;
-        h[i].parent = h[i].lchild = h[i].rchild = -1;
-    }
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-// 查找权值最小且未被选中的节点
-int flagMin(Huff* h, int len) {
-    int min = INT_MAX;
-    int minIndex = -1;
-    for (int i = 0; i < len; i++) {
-        if (h[i].weight < min && h[i].parent == -1) {
-            min = h[i].weight;
-            minIndex = i;
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
         }
     }
-    if (minIndex != -1) {
-        h[minIndex].parent = len;  // 标记已被选择，并设置父节点
-    }
-    return minIndex;  // 返回最小值下标
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1;
 }
 
-// 创建哈夫曼树
-void createHuff(Huff* h, int len) {
-    for (int i = len; i < 2 * len - 1; i++) {
-        int lchild = flagMin(h, i);  // 找到最小节点
-        int rchild = flagMin(h, i);  // 找到次小节点
-        h[i].lchild = lchild;
-        h[i].rchild = rchild;
-        h[i].weight = h[lchild].weight + h[rchild].weight;
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
     }
 }
 
-// 递归生成哈夫曼编码
-void generateHuffmanCode(Huff* h, int index, char* code, int length) {
-    if (h[index].lchild == -1 && h[index].rchild == -1) {
-        // 叶节点，打印编码
-        code[length] = '\0';  // 结束字符串
-        printf("Character with weight %d: %s\n", h[index].weight, code);
-        return;
-    }
+// 快速排序
+void quick_sort(int s[], int left, int right) {
+    if (left < right) {
+        
+        int i = left, j = right, pivot = s[left];
+        while (i < j) {
+            while (i < j && s[j] >= pivot)  // 从右向左找第一个小于x的数
+                j--;
+            if (i < j)
+                s[i++] = s[j];
 
-    // 左子树
-    if (h[index].lchild != -1) {
-        code[length] = '0';
-        generateHuffmanCode(h, h[index].lchild, code, length + 1);
-    }
-
-    // 右子树
-    if (h[index].rchild != -1) {
-        code[length] = '1';
-        generateHuffmanCode(h, h[index].rchild, code, length + 1);
+            while (i < j && s[i] < pivot)  // 从左向右找第一个大于等于x的数
+                i++;
+            if (i < j)
+                s[j--] = s[i];
+        }
+        s[i] = pivot;
+        quick_sort(s, left, i - 1);  // 递归调用
+        quick_sort(s, i + 1, right);
     }
 }
 
 int main() {
-    int data[] = {5, 9, 12, 13, 16, 45};  // 示例权重
-    int len = sizeof(data) / sizeof(data[0]);
-    Huff* h = (Huff*)malloc(sizeof(Huff) * (2 * len - 1));
+    int arr[] = {10, 7, 8, 9, 1, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
 
-    Init(h, data, len);
-    createHuff(h, len);
+    printf("排序前的数组: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
 
-    char code[100];                                // 存储编码
-    generateHuffmanCode(h, 2 * len - 2, code, 0);  // 从根节点开始生成编码
+    quick_sort(arr, 0, n - 1);
 
-    free(h);
+    printf("排序后的数组: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
     return 0;
 }

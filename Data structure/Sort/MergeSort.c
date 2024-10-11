@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// 将两个已排序的子数组合并成一个有序的数组
 void Merge(int a[], int low, int mid, int high) {
     int* b = (int*)malloc(sizeof(int) * (high - low + 1));
     for (int k = low; k <= high; k++) {
@@ -18,14 +19,13 @@ void Merge(int a[], int low, int mid, int high) {
         else
             a[k++] = b[j++];
     }
-    while (i <= mid) {
+    
+    while (i <= mid) 
         a[k++] = b[i++];
-    }
-    while (j <= high) {
+    while (j <= high) 
         a[k++] = b[j++];
-    }
-}   
-
+}
+// 递归地将数组分成两个子数组，直到子数组长度为 1，然后调用 merge 函数合并排序。
 void MergeSort(int a[], int low, int high) {
     if (low < high) {
         int mid = (low + high) / 2;
