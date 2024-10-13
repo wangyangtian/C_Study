@@ -1,34 +1,22 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-typedef struct Loc {
-    int x, y;
-} Loc;
-
 int board[8][8] = {0};  // 棋盘
-Loc location[8];        // 用于存储每个皇后的位置
 int count = 0;          // 记录解的数量
 
-// 检查位置 l 是否安全
-bool check(Loc l) {
-    // 检查上方列
-    for (int i = 0; i < l.x; i++) {
-        if (board[i][l.y] != 0)
+// 检查在第row行的col列放置是否安全
+bool isSafe(int row, int col) {
+    for (int i = 0; i < row; i++) {
+        // 检查列冲突
+        if (board[i][col] == 1)
+            return false;
+        // 检查左上对角线冲突
+        if (col - (row - i) >= 0 && board[i][col - (row - i)] == 1)
+            return false;
+        // 检查右上对角线冲突
+        if (col + (row - i) < 8 && board[i][col + (row - i)] == 1)
             return false;
     }
-
-    // 检查左上对角线
-    for (int i = l.x - 1, j = l.y - 1; i >= 0 && j >= 0; i--, j--) {
-        if (board[i][j] != 0)
-            return false;
-    }
-
-    // 检查右上对角线
-    for (int i = l.x - 1, j = l.y + 1; i >= 0 && j < 8; i--, j++) {
-        if (board[i][j] != 0)
-            return false;
-    }
-
     return true;
 }
 
@@ -48,10 +36,8 @@ void solveNQueens(int row) {
     }
 
     for (int col = 0; col < 8; col++) {
-        Loc l = {row, col};
-        if (check(l)) {
+        if (isSafe(row, col)) {
             board[row][col] = 1;    // 放置皇后
-            location[row] = l;      // 记录皇后位置
             solveNQueens(row + 1);  // 递归到下一行
             board[row][col] = 0;    // 撤销选择
         }

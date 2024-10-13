@@ -35,6 +35,7 @@ typedef struct LinkQueue {
     int data;
     struct LinkQueue* next;
 } LinkNode;
+    
 typedef struct  // 链队类型定义
 {
     LinkNode *front, *rear;
