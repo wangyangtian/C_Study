@@ -45,7 +45,7 @@ bool Empty(LinkList L) // 判断是否为空表
     return (L->next == NULL);
 }
 
-// 带头结点的插入
+// 带头结点的插入   
 bool ListInsert(LinkList L, int index, int elem) // 按位序插入元素
 {
     if (index < 1)

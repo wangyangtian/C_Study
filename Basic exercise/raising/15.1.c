@@ -22,7 +22,7 @@ bool Push(SqStack* s, double n) {
     return true;
 }
 
-double Pop(SqStack* s, double* n) {
+bool Pop(SqStack* s, double* n) {
     if (s->top == -1)
         return false;
     *n = s->num[s->top--];
