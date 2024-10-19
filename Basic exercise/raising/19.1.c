@@ -71,7 +71,7 @@ int getWPL(Huff* h, int len) {
 void HuffmanCode(Huff* h, int len,int index, char *code) {
     if(h[index].lchild==-1&&h[index].rchild==-1){
         code[len] = '\0';
-        printf("Character with weight %d: %s\n", h[index].weight, code);
+        printf("Character with weight %d--code: %s\n", h[index].weight, code);
         return;
     }
     //左子树
@@ -101,6 +101,8 @@ int main() {
     // 计算并输出WPL
     int wpl = getWPL(h, len);
     printf("哈夫曼树的WPL为: %d\n", wpl);
+    char code[100];
+    HuffmanCode(h, 0, 8, code);
     free(h);
     return 0;
 }
