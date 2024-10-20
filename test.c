@@ -1,68 +1,73 @@
+#include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef struct Link {
-    int          data;
-    struct Link* next;
-} LinkNode, *LinkList;
+typedef struct p {
+    double x;
+    double y;
+} Point;
 
-void Init(LinkList* l, int n) {
-    // 创建头结点
-    LinkNode* head = (LinkNode*) malloc(sizeof(LinkNode));
-    head->data     = 1;
-    *l             = head; // 初始化链表头指针
-
-    LinkNode* current = head; // 用于遍历链表
-
-    // 创建剩余的节点
-    for (int i = 2; i <= n; i++) {
-        LinkNode* newNode = (LinkNode*) malloc(sizeof(LinkNode));
-        newNode->data     = i;
-        current->next     = newNode;
-        current           = newNode;
-    }
-
-    current->next = head; // 形成循环链表
-}
-
-void Delete(LinkNode* prev) {
-    LinkNode* current = prev->next;
-    prev->next        = current->next;
-    free(current);
-}
-
-int josephus(LinkList* l, int n) {
-    LinkNode* current = *l;
-
-    while (current->next != current) { // 循环直到只剩一个节点
-        // 每次报数到第 k 人，这里 k=2
-        current = current->next; // 第一个人
-        Delete(current);         // 删除第二个人
-        current = current->next; // 移动到下一个人
-    }
-
-    return current->data; // 返回最后一个人的编号
-}
+typedef struct RodSegment {
+    int                ID;
+    int                PointNum;
+    Point*             points;
+    struct RodSegment* next;
+} RodSegment;
 
 int main() {
-    int n;
-    printf("请输入总人数: ");
-    scanf("%d", &n);
-    if (n < 1) {
-        printf("人数必须大于0。\n");
-        return 1; // 输入有效性检查
+    RodSegment* head = NULL;
+    RodSegment* tail = NULL;
+    int         id, n;
+
+    FILE* fp = fopen("test.txt", "r");
+    if (fp == NULL) {
+        perror("无法打开文件");
+        return EXIT_FAILURE;
     }
 
-    LinkList l;
-    Init(&l, n);
-    printf("最后一人编号：%d\n", josephus(&l, n));
+    while (fscanf(fp, "%d,%d", &id, &n) == 2) { // 确保成功读取两个值
+        RodSegment* newRoad = (RodSegment*) malloc(sizeof(RodSegment));
+        newRoad->ID         = id;
+        newRoad->PointNum   = n;                                  // 保存点的数量
+        newRoad->points     = (Point*) malloc(sizeof(Point) * n); // 为 n 个点分配内存
+        newRoad->next       = NULL;
 
-    // 释放链表内存
-    LinkNode* temp;
-    while (l) {
-        temp = l;
-        l    = l->next;
-        free(temp);
+        for (int i = 0; i < n; i++) {
+            fscanf(fp, "%lf,%lf", &newRoad->points[i].x, &newRoad->points[i].y); // 使用&符号
+        }
+
+        if (head == NULL) {
+            head = newRoad; // 第一个节点
+            tail = newRoad;
+        } else {
+            tail->next = newRoad; // 将新节点链接到链表
+            tail       = newRoad; // 更新尾指针
+        }
+    }
+
+    fclose(fp); // 关闭文件
+
+    // 输出ID为2的坐标
+    RodSegment* current = head;
+    while (current != NULL) {
+        if (current->ID == 2) {
+            printf("ID为%d的坐标如下：\n", current->ID);
+            for (int i = 0; i < current->PointNum; i++) {
+                printf("(%lf, %lf)\n", current->points[i].x, current->points[i].y);
+            }
+        }
+        current = current->next;
+    }
+
+    // 释放内存
+    current = head;
+    while (current != NULL) {
+        RodSegment* temp = current;
+        current          = current->next;
+        free(temp->points); // 释放点的内存
+        free(temp);         // 释放段的内存
     }
 
     return 0;
