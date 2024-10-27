@@ -10,7 +10,7 @@ void shell_sort(int arr[], int len) {
         // 从增量位置开始，对每个元素进行插入排序
         for (i = gap; i < len; i++) {
             temp = arr[i];  // 暂存当前元素
-
+            
             // 对距离gap的元素进行插入排序
             for (j = i - gap; j >= 0 && arr[j] > temp; j -= gap) {
                 arr[j + gap] = arr[j];  // 将元素向后移动

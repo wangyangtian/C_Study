@@ -7,8 +7,7 @@
 
 
 int main() {
-    char a[] = "134EOF";
-    printf("%d",strncmp(a, "EOF", 3));
-    
+    int a = '𝑥';
+    printf("%d", a);
     return 0;
 }
