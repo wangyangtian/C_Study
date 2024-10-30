@@ -47,8 +47,8 @@ int GetDepth(BiTree t) {
 // 在二叉树中查找指定值的节点
 void search(BiTree t, BiTNode** q, int key) {  // 因为指针q要修改，所以用**q
     if (t != NULL) {                           // 当前节点不为空
-        if (t->data == key) {  // 如果当前节点的数据等于要查找的值
-            *q = t;            // 将当前节点的地址存储在*q中
+        if (t->data == key) {                  // 如果当前节点的数据等于要查找的值
+            *q = t;                            // 将当前节点的地址存储在*q中
         } else {
             search(t->lchild, q, key);  // 递归查找左子树
             search(t->rchild, q, key);  // 递归查找右子树
@@ -86,21 +86,21 @@ typedef struct Linked_queue  // 队结点类型定义
 {
     BiTNode* data;
     struct Linked_queue* next;
-} LinkNode;
+} QNode;
 
 typedef struct  // 链队类型定义
 {
-    LinkNode *front, *rear;
+    QNode *front, *rear;
 } LinkQueue;
 
 // 带头结点初始化
 void InitQueue(LinkQueue* q) {
-    q->front = q->rear = (LinkNode*)malloc(sizeof(LinkNode));
+    q->front = q->rear = (QNode*)malloc(sizeof(QNode));
     q->front->next = NULL;
 }
 
 void EnQueue(LinkQueue* q, BiTNode* elem) {
-    LinkNode* s = (LinkNode*)malloc(sizeof(LinkNode));
+    QNode* s = (QNode*)malloc(sizeof(QNode));
     s->data = elem;
     s->next = NULL;
     if (q->rear == NULL) {
@@ -114,7 +114,7 @@ void EnQueue(LinkQueue* q, BiTNode* elem) {
 bool DeQueue(LinkQueue* q, BiTree* elem) {  // 带头结点的出队
     if (q->front == q->rear)
         return false;
-    LinkNode* p = q->front->next;
+    QNode* p = q->front->next;
     *elem = p->data;
     q->front->next = p->next;
     if (q->rear == p)
@@ -153,8 +153,8 @@ int GetTreeWidth(BiTree t) {
     InitQueue(&q);
     EnQueue(&q, t);  // 将根节点入队
 
-    LinkNode* current;  // 用于遍历当前层的队列节点
-    int maxWidth = 0;   // 用于记录树的最大宽度
+    QNode* current;    // 用于遍历当前层的队列节点
+    int maxWidth = 0;  // 用于记录树的最大宽度
 
     // 当队列不为空时，进行循环
     while (!IsQueueEmpty(q)) {
@@ -224,7 +224,7 @@ void LevelOrderRtoL(BiTree t) {  // 二叉树的自下而上、从右到左的�
     LinkStack s;
     InitStack(&s);
 
-    LinkNode* current;  // 用于遍历当前层的队列节点
+    QNode* current;  // 用于遍历当前层的队列节点
     // 当队列不为空时，进行循环
     while (!IsQueueEmpty(q)) {
         int nodeCount = 0;  // 用于记录当前层的节点数量
@@ -255,7 +255,7 @@ int BtDepth(BiTree t) {  // 非递归求二叉树深度
     LinkQueue q;
     InitQueue(&q);
     EnQueue(&q, t);
-    LinkNode* current;
+    QNode* current;
     int levelCnt = 0;
 
     while (!IsQueueEmpty(q)) {
@@ -464,8 +464,6 @@ BiTree PostInCreate(int* A, int* B, int Al, int Ar, int Bl, int Br) {
         root->rchild = NULL;
     return root;
 }
-
-
 
 int main() {
     // 创建一个简单的二叉树进行测试
