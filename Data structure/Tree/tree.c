@@ -403,40 +403,28 @@ bool IsCompleteBiTree(BiTree t) {
     return true;
 }
 
-// 根据先序遍历数组A和中序遍历数组B，构建二叉树
-BiTree PreInCreate(int* A, int* B, int Al, int Ar, int Bl, int Br) {
-    // A 为先序遍历数组，B 为中序遍历数组
-    // Al 和 Ar 为先序遍历数组中当前子树的起始和结束索引
-    // Bl 和 Br 为中序遍历数组中当前子树的起始和结束索引
-
-    BiTree root = (BiTNode*)malloc(sizeof(BiTNode));
-    root->data = A[Al];  // 先序遍历的第一个元素即为根节点
-
-    // 在中序遍历中找到根节点的位置
-    int i;
-    for (i = Bl; i <= Br; i++) {
-        if (B[i] == root->data) {
-            break;
+// 找到元素在中序遍历数组中的索引
+int findIndex(int arr[], int start, int end, int value) {
+    for (int i = start; i <= end; i++) {
+        if (arr[i] == value) {
+            return i;
         }
     }
+    return -1;  // 如果没找到
+}
 
-    // 计算左右子树的长度
-    int Llen = i - Bl;
-    int Rlen = Br - i;
+// 根据先序遍历数组A和中序遍历数组B，构建二叉树
+BiTree PreInCreate(int pre[], int pin[], int n) {
+    BiTree root = (BiTNode*)malloc(sizeof(BiTNode));
+    root->data = pre[0];  // 先序遍历的第一个元素即为根节点
+    root->lchild = root->rchild = NULL;
 
-    // 递归构建左右子树
-    if (Llen > 0) {
-        root->lchild = PreInCreate(A, B, Al + 1, Al + Llen, Bl, Bl + Llen - 1);
-    } else {
-        root->lchild = NULL;  // 如果左子树长度为0，则该节点没有左孩子
-    }
-    if (Rlen > 0) {
-        root->rchild = PreInCreate(A, B, Ar - Rlen + 1, Ar, Br - Rlen + 1, Br);
-    } else {
-        root->rchild = NULL;  // 如果右子树长度为0，则该节点没有右孩子
-    }
+    // 找到根节点在中序遍历数组中的索引
+    int rootIndex = findIndex(pin, 0, n - 1, root->data);
+    // 递归构建左子树和右子树
+    root->lchild = createTree(pre + 1, pin, rootIndex);                                      // 左子树
+    root->rchild = createTree(pre + rootIndex + 1, pin + rootIndex + 1, n - rootIndex - 1);  // 右子树
 
-    // 返回构建好的根节点
     return root;
 }
 

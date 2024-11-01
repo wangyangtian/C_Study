@@ -15,23 +15,23 @@ int MyStrlen(char* string) {
     return len;
 }
 
-int MyAtoi(const char *str){
-    int result=0;
-    int sign=1;
+int MyAtoi(const char* str) {
+    int result = 0;
+    int sign = 1;
 
-    while(*str==' '){
+    while (*str == ' ') {
         str++;
     }
-    while(*str=='-'||*str=='+'){
-        sign=(*str=='-')?-1:1;
+    while (*str == '-' || *str == '+') {
+        sign = (*str == '-') ? -1 : 1;
         str++;
     }
-    while(isdigit(*str)){
-        int digit=*str-'0';
-        result=result*10+digit;
+    while (isdigit(*str)) {
+        int digit = *str - '0';
+        result = result * 10 + digit;
         str++;
     }
-    return result*sign;
+    return result * sign;
 }
 
 void MyItoa(int n, char* s) {
