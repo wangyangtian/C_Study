@@ -21,8 +21,24 @@ void permute(char* a, int start, int end) {
     }
 }
 
+void combine_permute(int n, int r, char* a, char* b, int R) {
+    if (r == 0) {
+        char c[100] = {'\0'};
+        for (int i = 0; i < R; i++) {
+            c[i] = a[b[i]];
+        }
+        permute(c, 0, R - 1);
+    } else {
+        for (int j = n; j >= r; j--) {
+            b[r - 1] = j - 1;
+            combine_permute(j - 1, r - 1, a, b, R);
+        }
+    }
+}
+
 int main() {
-    char a[] = "1234";
-    permute(a, 0, 2);
+    char a[] = "12345";
+    char b[5];
+    combine_permute(5, 3, a, b, 3);
     return 0;
 }
