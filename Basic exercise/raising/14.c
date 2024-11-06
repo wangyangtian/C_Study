@@ -7,12 +7,12 @@
 
 #define MAXSIZE 100
 
-typedef struct String {
+typedef struct Str {
     char a[MAXSIZE];
     int length;
-} String;
+} Str;
 
-void next(const String substr, int* next) {
+void getNext(const Str substr, int* next) {
     int i = 1, j = 0;
     next[1] = 0;
     while (i < substr.length) {
@@ -26,7 +26,7 @@ void next(const String substr, int* next) {
     }
 }
 
-int KMP(String str, String substr, int next[]) {
+int KMP(Str str, Str substr, int next[]) {
     int i = 1, j = 1;
     while (i <= str.length && j <= substr.length) {
         if (j == 0 || str.a[i] == substr.a[j]) {
@@ -39,4 +39,21 @@ int KMP(String str, String substr, int next[]) {
         return i - substr.length;
     else
         return 0;
+}
+
+int main() {
+    Str str = {"ababcabcabababd", 15};
+    Str substr = {"ababd", 5};
+    int next[MAXSIZE];
+
+    getNext(substr, next);
+
+    int result = KMP(str, substr, next);
+    if (result != 0) {
+        printf("Pattern found at position %d\n", result);
+    } else {
+        printf("Pattern not found\n");
+    }
+
+    return 0;
 }

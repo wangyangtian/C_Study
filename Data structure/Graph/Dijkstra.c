@@ -15,7 +15,7 @@ typedef struct {
 typedef struct ArcNode {   // 边
     int adjvex;            // 弧指向的结点
     struct ArcNode* next;  // 指向下一条弧的指针
-    int weight;           //边权值
+    int weight;            // 边权值
 } ArcNode;
 
 typedef struct VNode {  // 顶点
@@ -24,8 +24,8 @@ typedef struct VNode {  // 顶点
 } VNode, AdjList[MAXVERTEXNUM];
 
 typedef struct ALGraph {
-    AdjList vertices;   //邻接表
-    int vexnum, arcnum; //图的顶点数和弧数
+    AdjList vertices;    // 邻接表
+    int vexnum, arcnum;  // 图的顶点数和弧数
 } ALGraph;
 
 // 寻找距离最近的未访问顶点
@@ -34,7 +34,8 @@ int MinDistance(int dist[], bool sptSet[], int V) {
 
     for (int v = 0; v < V; v++) {
         if (sptSet[v] == false && dist[v] <= min) {
-            min = dist[v], min_index = v;
+            min = dist[v];
+            min_index = v;
         }
     }
 
@@ -63,17 +64,10 @@ void PrintSolution(int dist[], int prev[], int V, int src) {
 
 // Dijkstra算法实现，求从源点到所有顶点的最短路径
 void Dijkstra(AMGraph* g, int src) {
-    int V = g->vexnum;          // 顶点个数
-    int dist[MAXVERTEXNUM];     // 存储源点到每个顶点的最短距离
-    bool sptSet[MAXVERTEXNUM];  // sptSet[i]为true表示顶点i在最短路径树中(Shortest Path Tree Set)
-    int prev[MAXVERTEXNUM];     // prev[i]表示从源点到i的最短路径上的前一个顶点
-
-    // 初始化所有顶点的距离为无穷大，sptSet[]为false
-    for (int i = 0; i < V; i++) {
-        dist[i] = INFINITY;
-        sptSet[i] = false;
-        prev[i] = -1;  // 初始化前驱节点为-1，表示无前驱
-    }
+    int V = g->vexnum;                    // 顶点个数
+    int dist[MAXVERTEXNUM] = {INFINITY};  // 存储源点到每个顶点的最短距离
+    bool sptSet[MAXVERTEXNUM] = {false};  // sptSet[i]为true表示顶点i在(Shortest Path Tree Set)中
+    int prev[MAXVERTEXNUM] = {-1};        // prev[i]表示从源点到i的最短路径上的前一个顶点
 
     // 源点到自身距离为0
     dist[src] = 0;
@@ -81,15 +75,14 @@ void Dijkstra(AMGraph* g, int src) {
     // 找到从源点到所有其他顶点的最短路径
     for (int count = 0; count < V - 1; count++) {
         // 从尚未处理的顶点中选择距离最小的顶点
-        int u = MinDistance(dist, sptSet, V);
+        int u = (dist, sptSet, V);
 
         // 将选中的顶点加入到最短路径树中
         sptSet[u] = true;
 
         // 更新邻接顶点的距离值
         for (int v = 0; v < V; v++) {
-            if (!sptSet[v] && g->Edge[u][v] != 0 && dist[u] != INFINITY &&
-                dist[u] + g->Edge[u][v] < dist[v]) {
+            if (!sptSet[v] && g->Edge[u][v] != 0 && dist[u] + g->Edge[u][v] < dist[v]) {
                 dist[v] = dist[u] + g->Edge[u][v];
                 prev[v] = u;  // 更新前驱节点
             }
@@ -190,24 +183,24 @@ int main() {
     // // 运行Dijkstra算法，假设从顶点0开始
     // Dijkstra(&g, 0);
     ALGraph g;
-    g.vexnum = 5; // 设置图的顶点数
-    g.arcnum = 7; // 设置图的边数
+    g.vexnum = 5;  // 设置图的顶点数
+    g.arcnum = 7;  // 设置图的边数
 
     // 初始化图的顶点
     for (int i = 0; i < g.vexnum; i++) {
-        g.vertices[i].data = 'A' + i; // 顶点命名为A, B, C, D, E...
-        g.vertices[i].first = NULL;   // 初始化无边
+        g.vertices[i].data = 'A' + i;  // 顶点命名为A, B, C, D, E...
+        g.vertices[i].first = NULL;    // 初始化无边
     }
 
     // 添加边
-    AddEdge(&g, 0, 1, 10); // A -> B
-    AddEdge(&g, 0, 4, 5);  // A -> E
-    AddEdge(&g, 1, 2, 1);  // B -> C
-    AddEdge(&g, 2, 3, 4);  // C -> D
-    AddEdge(&g, 3, 0, 7);  // D -> A
-    AddEdge(&g, 4, 1, 3);  // E -> B
-    AddEdge(&g, 4, 2, 9);  // E -> C
-    AddEdge(&g, 4, 3, 2);  // E -> D
+    AddEdge(&g, 0, 1, 10);  // A -> B
+    AddEdge(&g, 0, 4, 5);   // A -> E
+    AddEdge(&g, 1, 2, 1);   // B -> C
+    AddEdge(&g, 2, 3, 4);   // C -> D
+    AddEdge(&g, 3, 0, 7);   // D -> A
+    AddEdge(&g, 4, 1, 3);   // E -> B
+    AddEdge(&g, 4, 2, 9);   // E -> C
+    AddEdge(&g, 4, 3, 2);   // E -> D
 
     // 运行Dijkstra算法，假设从顶点0(A)开始
     Dijkstra_L(&g, 1);

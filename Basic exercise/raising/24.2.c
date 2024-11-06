@@ -1,34 +1,37 @@
-#include<stdio.h>
-#include<string.h>
-#include<stdbool.h>
-#include<ctype.h>
-#include<stdlib.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAXN 10
 #define MAXCOLOR 4
 
 int adjMatrix[MAXN][MAXN];
-int colors[MAXCOLOR];
+int colors[MAXCOLOR] = {0};
 int N;
+int count = 0;
 
-bool isVaild(int region,int color){
-    for (int i = 0; i < N;i++){
-        if(adjMatrix[region][i]&&colors[i]==color)
+bool isValid(int region, int color) {
+    for (int i = 0; i < N; i++) {
+        if (adjMatrix[region][i] && colors[i] == color)
             return false;
     }
     return true;
 }
 
-void colorGraph(int region){
-    if(region==N){
-        for (int i = 0; i < N;i++)
-            printf("%d ", colors[i]);
+void colorGraph(int region) {
+    if (region == N) {
+        count++;
+        printf("第%d组符合的涂色：", count);
+        for (int i = 0; i < N; i++)
+            printf("点%d涂%d ", i + 1, colors[i]);
         printf("\n");
         return;
     }
 
-    for (int i = 1; i <= MAXCOLOR;i++){
-        if(isVaild(region,i)){
+    for (int i = 1; i <= MAXCOLOR; i++) {
+        if (isValid(region, i)) {
             colors[region] = i;
             colorGraph(region + 1);
             colors[region] = 0;
@@ -40,11 +43,13 @@ int main() {
     printf("输入区域数:\n");
     scanf("%d", &N);
     printf("输入邻接矩阵:\n");
-    for (int i = 0; i < N;i++){
-        for (int j = 0; j < N;j++)
-            scanf("%d", adjMatrix[i][j]);
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++)
+            scanf("%d", &adjMatrix[i][j]);
     }
     colorGraph(0);
+    printf("共%d中涂色方案\n", count);
     return 0;
 }
 

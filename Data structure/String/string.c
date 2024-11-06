@@ -54,21 +54,21 @@ int Index(SString S, SString T) {
 }
 
 int Index_2(SString s, SString t) {
-    int i = 1;  // 从1开始
-    int j = 1;  // 从1开始
-    while (i <= s.length - t.length +
-                    1) {  // 修改循环条件，确保能够匹配到最后一个可能的位置
+    int i = 1, j = 1, k = i;
+
+    while (i <= s.length && j <= t.length) {
         if (s.ch[i] == t.ch[j]) {
             i++;
             j++;
-            if (j > t.length)  // j超过模式串长度时匹配成功
-                return i - t.length;
         } else {
-            i = i - j + 2;  // i回退到下一起始位置
-            j = 1;          // j重置为1
+            j = 1;
+            i = k + 1;
         }
     }
-    return 0;
+    if (j > t.length)
+        return k;
+    else
+        return 0;
 }
 
 int main() {
