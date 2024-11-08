@@ -55,7 +55,7 @@ void createHuff(Huff* h, int len) {
 int getWPL(Huff* h, int len) {
     int wpl = 0;
     for (int i = 0; i < len; i++) {  // 只遍历叶子节点
-        int depth = 1;
+        int depth = 0;
         int index = i;
         // 向上找到根节点，并计算深度
         while (h[index].parent != -1) {
@@ -68,26 +68,26 @@ int getWPL(Huff* h, int len) {
     return wpl;
 }
 
-void HuffmanCode(Huff* h, int len,int index, char *code) {
-    if(h[index].lchild==-1&&h[index].rchild==-1){
+void HuffmanCode(Huff* h, int len, int index, char* code) {
+    if (h[index].lchild == -1 && h[index].rchild == -1) {
         code[len] = '\0';
         printf("Character with weight %d--code: %s\n", h[index].weight, code);
         return;
     }
-    //左子树
-    if(h[index].lchild!=-1){
+    // 左子树
+    if (h[index].lchild != -1) {
         code[len] = '0';
         HuffmanCode(h, len + 1, h[index].lchild, code);
     }
-    //右子树
-    if(h[index].rchild!=-1){
+    // 右子树
+    if (h[index].rchild != -1) {
         code[len] = '1';
         HuffmanCode(h, len + 1, h[index].rchild, code);
     }
 }
 
 int main() {
-    int data[] = {1, 2, 3, 4, 5};
+    int data[] = {2, 5, 7, 9, 13};
     int len = sizeof(data) / sizeof(data[0]);
     Huff* h = (Huff*)malloc(sizeof(Huff) * (2 * len - 1));
     Init(h, data, len);
@@ -95,7 +95,7 @@ int main() {
     // 验证输出
     for (int i = 0; i < 2 * len - 1; i++) {
         printf("节点 %d: weight = %d, parent = %d, lchild = %d, rchild = %d\n",
-               i+1, h[i].weight, h[i].parent, h[i].lchild, h[i].rchild);
+               i + 1, h[i].weight, h[i].parent, h[i].lchild, h[i].rchild);
     }
 
     // 计算并输出WPL

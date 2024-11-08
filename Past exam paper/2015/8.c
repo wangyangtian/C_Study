@@ -5,68 +5,67 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAXSIZE 10
-#define INF INT_MAX
+#define MAX_N 10
+#define MAX_COLOR 4
 
-typedef struct Graph {
-    int vertex[MAXSIZE];
-    int edge[MAXSIZE][MAXSIZE];
-    int v_num, e_num;
-} Graph;
+int adjMatrix[MAX_N][MAX_N];
+int colors[MAX_N] = {0};
+int N;
+int count = 0;
 
-int minDist(int dist[], bool sptSet[], int V) {
-    int min = INF;
-    int min_INdex = -1;
-    for (int i = 0; i < V; i++) {
-        if (sptSet[i] != true && dist[i] < min) {
-            min = dist[i];
-            min_INdex = i;
-        }
+bool isValid(int region, int color) {
+    for (int i = 0; i < N; i++) {
+        if (adjMatrix[region][i] && colors[i] == color)
+            return false;
     }
-    return min_INdex;
+    return true;
 }
 
-void printPath(int prev[], int i) {
-    if (prev[i] == -1) {
-        printf("%d ", i);
+void colorGraph(int region) {
+    if (region == N) {
+        count++;
+        printf("第%d组涂色方案\n", count);
+        for (int i = 0; i < N; i++) {
+            printf("区域%d涂%d ", i + 1, colors[i]);
+        }
+        printf("\n");
         return;
     }
-    printPath(prev, prev[i]);
-    printf("->%d", i);
-}
 
-void printSolution(int dist[], int prev[], int V, int src) {
-    printf("");
-    for (int i = 0; i < V; i++) {
-        printf("%d到%d的距离为：%d ;", i, src, dist[i]);
-        printPath(prev, i);
-        printf("\n");
-    }
-}
-
-void Dijkstra(Graph g, int src) {
-    int V = g.v_num;
-    int dist[MAXSIZE] = {INF};
-    bool sptSet[MAXSIZE] = {false};
-    int prev[MAXSIZE] = {-1};
-
-    dist[src] = 0;
-
-    for (int i = 0; i < V - 1; i++) {
-        int u = minDist(dist, sptSet, V);
-        sptSet[u] = true;
-
-        for (int v = 0; v < V; v++) {
-            if (!sptSet[v] && g.edge[u][v] != 0 && dist[u] + g.edge[u][v] < dist[v]) {
-                dist[v] = dist[u] + g.edge[u][v];
-                prev[v] = u;
-            }
+    for (int i = 1; i <= MAX_COLOR; i++) {
+        if (isValid(region, i)) {
+            colors[region] = i;
+            colorGraph(region + 1);
+            colors[region] = 0;
         }
     }
-
-    printSolution(dist, prev, V, src);
 }
 
 int main() {
+    // printf("输入区域数:\n");
+    // scanf("%d", &N);
+    // printf("输入邻接矩阵:\n");
+
+    // for (int i = 0; i < N; i++) {
+    //     for (int j = 0; j < N; j++)
+    //         scanf("%d", &adjMatrix[i][j]);
+    // }
+    N = 5;  // 区域数量
+    int adjMatrixExample[5][5] = {
+        {0, 1, 1, 1, 1},
+        {1, 0, 1, 0, 1},
+        {1, 1, 0, 1, 0},
+        {1, 0, 1, 0, 1},
+        {1, 1, 0, 1, 0}};
+
+    // 将示例邻接矩阵复制到全局的 adjMatrix 中
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            adjMatrix[i][j] = adjMatrixExample[i][j];
+        }
+    }
+
+    colorGraph(0);
+    printf("共%d中涂色方案\n", count);
     return 0;
 }

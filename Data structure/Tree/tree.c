@@ -82,6 +82,7 @@ void trave(BiTree t, int k) {
         trave(t->rchild, k);  // 递归遍历右子树
     }
 }
+
 typedef struct Linked_queue  // 队结点类型定义
 {
     BiTNode* data;
@@ -285,6 +286,7 @@ int BtDepth2(BiTree T) {
     int rd = BtDepth2(T->rchild);
     return (ld > rd ? ld : rd) + 1;
 }
+
 void PreOrderNonRecursion(BiTree T) {
     LinkStack S;
     InitStack(&S);  // 初始化栈
@@ -414,7 +416,7 @@ int findIndex(int arr[], int start, int end, int value) {
 }
 
 // 根据先序遍历数组A和中序遍历数组B，构建二叉树
-BiTree PreInCreate(int pre[], int pin[], int n) {
+BiTree createTree(int pre[], int pin[], int n) {
     BiTree root = (BiTNode*)malloc(sizeof(BiTNode));
     root->data = pre[0];  // 先序遍历的第一个元素即为根节点
     root->lchild = root->rchild = NULL;

@@ -8,7 +8,7 @@
 #define MAXCOLOR 4
 
 int adjMatrix[MAXN][MAXN];
-int colors[MAXCOLOR] = {0};
+int colors[MAXN] = {0};
 int N;
 int count = 0;
 
@@ -25,7 +25,7 @@ void colorGraph(int region) {
         count++;
         printf("第%d组符合的涂色：", count);
         for (int i = 0; i < N; i++)
-            printf("点%d涂%d ", i + 1, colors[i]);
+            printf("区域%d涂%d ", i + 1, colors[i]);
         printf("\n");
         return;
     }
@@ -40,14 +40,29 @@ void colorGraph(int region) {
 }
 
 int main() {
-    printf("输入区域数:\n");
-    scanf("%d", &N);
-    printf("输入邻接矩阵:\n");
+    // printf("输入区域数:\n");
+    // scanf("%d", &N);
+    // printf("输入邻接矩阵:\n");
 
+    // for (int i = 0; i < N; i++) {
+    //     for (int j = 0; j < N; j++)
+    //         scanf("%d", &adjMatrix[i][j]);
+    // }
+    N = 5;  // 区域数量
+    int adjMatrixExample[5][5] = {
+        {0, 1, 1, 1, 1},
+        {1, 0, 1, 0, 1},
+        {1, 1, 0, 1, 0},
+        {1, 0, 1, 0, 1},
+        {1, 1, 0, 1, 0}};
+
+    // 将示例邻接矩阵复制到全局的 adjMatrix 中
     for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++)
-            scanf("%d", &adjMatrix[i][j]);
+        for (int j = 0; j < N; j++) {
+            adjMatrix[i][j] = adjMatrixExample[i][j];
+        }
     }
+
     colorGraph(0);
     printf("共%d中涂色方案\n", count);
     return 0;
