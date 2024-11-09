@@ -18,7 +18,7 @@ typedef struct AMGraph  // 邻接矩阵(Adjacency Matrix Graph)
 typedef struct ArcNode {   // 边
     int adjvex;            // 弧指向的结点
     struct ArcNode* next;  // 指向下一条弧的指针
-    int weight;           //边权值
+    int weight;            // 边权值
 } ArcNode;
 
 typedef struct VNode {  // 顶点
@@ -27,15 +27,15 @@ typedef struct VNode {  // 顶点
 } VNode, AdjList[MAXVERTEXNUM];
 
 typedef struct ALGraph {
-    AdjList vertices;   //邻接表
-    int vexnum, arcnum; //图的顶点数和弧数
+    AdjList vertices;    // 邻接表
+    int vexnum, arcnum;  // 图的顶点数和弧数
 } ALGraph;
 
 typedef struct LinkQueue {
     int data;
     struct LinkQueue* next;
 } LinkNode;
-    
+
 typedef struct  // 链队类型定义
 {
     LinkNode *front, *rear;
@@ -70,7 +70,8 @@ bool IsQueueEmpty(LinkQueue q) {
     return q.front == q.rear;
 }
 
-void visit(int v) {}
+void visit(int v) {
+}
 
 // 判断图G中是否存在边<x, y>或(x, y)
 bool Adjacent(AMGraph g, int x, int y) {
@@ -129,7 +130,7 @@ int FirstNeighbor2(ALGraph g, int x) {
     if (p != NULL) {
         return p->adjvex;
     }
-    return -1; // 没有邻接点时返回 -1
+    return -1;  // 没有邻接点时返回 -1
 }
 
 // NextNeighbor: 返回图G中顶点x的下一个邻接点，假设y是一个已知的邻接点
@@ -151,7 +152,7 @@ int NextNeighbor_L(ALGraph g, int x, int y) {
         }
         p = p->next;
     }
-    return -1; // 没有下一个邻接点时返回 -1
+    return -1;  // 没有下一个邻接点时返回 -1
 }
 
 // Get_edge_value: 获取图中边<x, y>的权值
@@ -171,93 +172,97 @@ void Set_edge_value(AMGraph* G, int x, int y, int v) {
     }
 }
 
-void BFS(AMGraph g, int v, bool Visited[]) {
-    LinkQueue q;  // 定义一个队列用于存储待访问的顶点
-    int e;  // 用于保存从队列中取出的顶点
-    InitQueue(&q);  // 初始化队列
-    visit(v);  // 访问初始顶点v
-    Visited[v] = true;  // 标记顶点v已被访问
-    EnQueue(&q, v);  // 将顶点v入队
+void BFS(AMGraph* graph, int start) {
+    bool visited[MAXVERTEXNUM] = {false};  // 初始化访问数组
+    int queue[MAXVERTEXNUM];
+    int front = 0, rear = 0;  // 队列的头部和尾部指针
 
-    while (!IsQueueEmpty(q)) {  // 当队列不为空时循环
-        DeQueue(&q, &e);  // 从队列中取出一个顶点e
-        for (int w = FirstNeighbor(g, e); w >= 0; w = NextNeighbor(g, e, w)) {  // 遍历顶点e的所有邻接点
-            if (!Visited[w]) {  // 如果顶点w未被访问
-                visit(w);  // 访问顶点w
-                Visited[w] = true;  // 标记顶点w已被访问
-                EnQueue(&q, w);  // 将顶点w入队
+    // 起始顶点入队并标记为已访问
+    queue[rear++] = start;
+    visited[start] = true;
+
+    while (front != rear) {
+        int v = queue[front++];  // 出队
+        printf("%c ", graph->Vex[v]);
+
+        // 遍历所有邻接点
+        for (int i = 0; i < graph->vexnum; i++) {
+            if (graph->Edge[v][i] != 0 && !visited[i]) {  // 如果存在边且未访问
+                queue[rear++] = i;                        // 入队
+                visited[i] = true;
             }
         }
     }
 }
 
 void BFS_L(ALGraph g, int v, bool Visited[]) {
-    LinkQueue q;  // 定义一个队列用于存储待访问的顶点
-    InitQueue(&q);  // 初始化队列
-    visit(v);  // 访问初始顶点v
+    LinkQueue q;        // 定义一个队列用于存储待访问的顶点
+    InitQueue(&q);      // 初始化队列
+    visit(v);           // 访问初始顶点v
     Visited[v] = true;  // 标记顶点v已被访问
-    EnQueue(&q, v);  // 将顶点v入队
+    EnQueue(&q, v);     // 将顶点v入队
 
     while (!IsQueueEmpty(q)) {  // 当队列不为空时循环
         int u;
-        DeQueue(&q, &u);  // 从队列中取出一个顶点u
-        ArcNode* p = g.vertices[u].first;  // 获取顶点u的第一条边
-        while (p) {  // 遍历顶点u的所有邻接点
-            if (!Visited[p->adjvex]) {  // 如果邻接点p->adjvex未被访问
-                visit(p->adjvex);  // 访问邻接点p->adjvex
+        DeQueue(&q, &u);                    // 从队列中取出一个顶点u
+        ArcNode* p = g.vertices[u].first;   // 获取顶点u的第一条边
+        while (p) {                         // 遍历顶点u的所有邻接点
+            if (!Visited[p->adjvex]) {      // 如果邻接点p->adjvex未被访问
+                visit(p->adjvex);           // 访问邻接点p->adjvex
                 Visited[p->adjvex] = true;  // 标记邻接点p->adjvex已被访问
-                EnQueue(&q, p->adjvex);  // 将邻接点p->adjvex入队
+                EnQueue(&q, p->adjvex);     // 将邻接点p->adjvex入队
             }
             p = p->next;  // 指向下一条弧
         }
     }
 }
 
-void BFSTraverse(AMGraph g) {   // 广度优先遍历图G，适用于非连通图
-    bool Visited[MAXVERTEXNUM] = {false};  // 初始化访问标记数组，表示所有顶点都未被访问
-    for (int v = 0; v < g.vexnum; v++) {  // 遍历图G中的所有顶点
-        if (!Visited[v]) {  // 如果顶点v未被访问
-            BFS(g, v, Visited);  // 从顶点v开始进行广度优先遍历
+void BFS_Traversal(AMGraph* graph) {
+    bool visited[MAXVERTEXNUM] = {false};  // 初始化访问数组
+    for (int i = 0; i < graph->vexnum; i++) {
+        if (!visited[i]) {  // 对未访问的顶点调用 BFS
+            BFS(graph, i);
         }
     }
 }
 
-void DFS(AMGraph g, int v, bool Visited[]) {
-    visit(v);  // 访问顶点v
-    Visited[v] = true;  // 标记顶点v已被访问
-    for (int w = FirstNeighbor(g, v); w >= 0; w = NextNeighbor(g, v, w)) {  // 遍历顶点v的所有邻接点
-        if (!Visited[w]) {  // 如果顶点w未被访问
-            DFS(g, w, Visited);  // 递归访问顶点w
+void DFS(AMGraph* graph, int v, bool* visited) {
+    visited[v] = true;  // 标记该顶点已访问
+    printf("%c ", graph->Vex[v]);
+
+    // 遍历所有邻接点
+    for (int i = 0; i < graph->vexnum; i++) {
+        if (graph->Edge[v][i] != 0 && !visited[i]) {  // 如果存在边且未访问
+            DFS(graph, i, visited);
         }
     }
 }
 
 void DFS_L(ALGraph g, int v, bool Visited[]) {
-    visit(v);  // 访问顶点v
-    Visited[v] = true;  // 标记顶点v已被访问
-    ArcNode* p = g.vertices[v].first;  // 获取顶点v的第一条边
-    while (p) {  // 遍历顶点v的所有邻接点
-        if (!Visited[p->adjvex]) {  // 如果邻接点p->adjvex未被访问
+    visit(v);                              // 访问顶点v
+    Visited[v] = true;                     // 标记顶点v已被访问
+    ArcNode* p = g.vertices[v].first;      // 获取顶点v的第一条边
+    while (p) {                            // 遍历顶点v的所有邻接点
+        if (!Visited[p->adjvex]) {         // 如果邻接点p->adjvex未被访问
             DFS_L(g, p->adjvex, Visited);  // 递归访问邻接点p->adjvex
         }
         p = p->next;  // 指向下一条弧
     }
 }
 
-void DFSTraverse(AMGraph g) {   // 深度优先遍历图G，适用于非连通图
-    bool Visited[MAXVERTEXNUM] = {false};  // 初始化访问标记数组，表示所有顶点都未被访问
-    for (int v = 0; v < g.vexnum; v++) {  // 遍历图G中的所有顶点
-        if (!Visited[v]) {  // 如果顶点v未被访问
-            DFS(g, v, Visited);  // 从顶点v开始进行深度优先遍历
+void DFS_Traversal(AMGraph* graph) {
+    bool visited[MAXVERTEXNUM] = {false};  // 初始化访问数组
+    for (int i = 0; i < graph->vexnum; i++) {
+        if (!visited[i]) {  // 对未访问的顶点调用 DFS
+            DFS(graph, i, visited);
         }
     }
 }
 
 // 使用邻接矩阵实现 Prim 算法
-void PrimAM(AMGraph *G, int start)
-{
-    int lowcost[MAXVERTEXNUM];   // 存储最小代价
-    int closest[MAXVERTEXNUM];   // 存储相应的最小代价边的另一个端点
+void PrimAM(AMGraph* G, int start) {
+    int lowcost[MAXVERTEXNUM];  // 存储最小代价
+    int closest[MAXVERTEXNUM];  // 存储相应的最小代价边的另一个端点
     int min, minid;
 
     // 初始化
@@ -296,7 +301,7 @@ void PrimAM(AMGraph *G, int start)
 }
 
 // 查找顶点位置的辅助函数
-int LocateVertex(ALGraph *G, char vertex) {
+int LocateVertex(ALGraph* G, char vertex) {
     for (int i = 0; i < G->vexnum; i++) {
         if (G->vertices[i].data == vertex)
             return i;
@@ -305,7 +310,7 @@ int LocateVertex(ALGraph *G, char vertex) {
 }
 
 // 使用邻接表的Prim算法
-void PrimAL(ALGraph *G, int start) {
+void PrimAL(ALGraph* G, int start) {
     int lowcost[MAXVERTEXNUM];  // 存储最小代价
     int closest[MAXVERTEXNUM];  // 存储相应的最小代价边的另一个端点
     int min, minid;
@@ -324,7 +329,7 @@ void PrimAL(ALGraph *G, int start) {
     for (int i = 1; i < G->vexnum; i++) {
         min = INFINITY;
         minid = -1;
-        ArcNode *p = G->vertices[current].first;
+        ArcNode* p = G->vertices[current].first;
 
         // 更新与当前树相邻的顶点的代价
         while (p) {
@@ -361,11 +366,12 @@ void PrintPath(int prev[], int i) {
     PrintPath(prev, prev[i]);
     printf("-> %d ", i);
 }
+
 // 求顶点u 到其他顶点的最短路径
 void BFS_ShortestPath(AMGraph* g, int u) {
     bool Visited[MAXVERTEXNUM] = {false};  // 是否访问标记
-    int d[MAXVERTEXNUM];  // d[i] 表示从 u 到 i 结点的最短路径长度
-    int path[MAXVERTEXNUM];  // path[i] 表示最短路径中每个结点的前一个结点
+    int d[MAXVERTEXNUM];                   // d[i] 表示从 u 到 i 结点的最短路径长度
+    int path[MAXVERTEXNUM];                // path[i] 表示最短路径中每个结点的前一个结点
     LinkQueue q;
     InitQueue(&q);
 
@@ -382,24 +388,24 @@ void BFS_ShortestPath(AMGraph* g, int u) {
         DeQueue(&q, &current);
         for (int w = FirstNeighbor(*g, current); w >= 0; w = NextNeighbor(*g, current, w)) {
             if (!Visited[w]) {
-                d[w] = d[current] + 1;    // 更新最短路径长度
-                path[w] = current;        // 记录前驱结点
-                Visited[w] = true;  // 标记结点已访问
-                EnQueue(&q, w);     // 邻接点入队
+                d[w] = d[current] + 1;  // 更新最短路径长度
+                path[w] = current;      // 记录前驱结点
+                Visited[w] = true;      // 标记结点已访问
+                EnQueue(&q, w);         // 邻接点入队
             }
         }
     }
     // 输出最短路径信息
     for (int i = 0; i < g->vexnum; i++) {
         printf("Shortest path from vertex %d to vertex %d is %d\n", u, i, d[i]);
-        PrintPath(path,i);
+        PrintPath(path, i);
         printf("\n");
     }
 }
 
 int main() {
     AMGraph g;
-    g.vexnum = 8;  // 设置图的顶点数
+    g.vexnum = 8;   // 设置图的顶点数
     g.arcnum = 10;  // 设置图的边数
 
     // 初始化邻接矩阵
