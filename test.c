@@ -1,102 +1,63 @@
-#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#define MAXVERTEXNUM 100
-#define INFINITY INT_MAX  // 定义 INFINITY 为一个很大的整数表示无穷大
+typedef struct TreeNode {
+    int val;
+    struct TreeNode* left;
+    struct TreeNode* right;
+} TreeNode;
 
-typedef struct {
-    char Vex[MAXVERTEXNUM];                // 顶点数组
-    int Edge[MAXVERTEXNUM][MAXVERTEXNUM];  // 邻接矩阵
-    int vexnum, edgenum;                   // 顶点数和边数
-} AMGraph;
+// 创建一个新节点
+TreeNode* createNode(int value) {
+    TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));
+    newNode->val = value;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
 
-void PrimAM(AMGraph *G, int start) {
-    int lowcost[MAXVERTEXNUM];  // 存储最小代价
-    int closest[MAXVERTEXNUM];  // 存储相应的最小代价边的另一个端点
-    int min, minid;
+// 非递归后序遍历
+void postOrderTraversal(TreeNode* root) {
+    if (root == NULL)
+        return;
 
-    // 初始化
-    for (int i = 0; i < G->vexnum; i++) {
-        lowcost[i] = G->Edge[start][i];
-        closest[i] = start;
+    TreeNode* stack1[100];  // 第一个栈
+    TreeNode* stack2[100];  // 第二个栈
+    int top1 = -1, top2 = -1;
+
+    stack1[++top1] = root;  // 将根节点压入第一个栈
+
+    while (top1 >= 0) {
+        TreeNode* node = stack1[top1--];  // 弹出节点
+        stack2[++top2] = node;            // 将弹出的节点压入第二个栈
+
+        // 将左子节点压入第一个栈
+        if (node->left)
+            stack1[++top1] = node->left;
+        // 将右子节点压入第一个栈
+        if (node->right)
+            stack1[++top1] = node->right;
     }
-    closest[start] = -1;  // 将起点标记为已加入树
-
-    // Prim算法主循环
-    for (int i = 1; i < G->vexnum; i++) {
-        min = INFINITY;
-        minid = -1;
-
-        // 查找最小代价边
-        for (int j = 0; j < G->vexnum; j++) {
-            if (closest[j] != -1 && lowcost[j] < min) {
-                min = lowcost[j];
-                minid = j;
-            }
-        }
-
-        // 输出最小代价边
-        if (minid != -1) {
-            printf("边: %c - %c, 权值: %d\n", G->Vex[closest[minid]], G->Vex[minid], min);
-        }
-
-        // 将新顶点加入树
-        closest[minid] = -1;
-
-        // 更新lowcost和closest数组
-        for (int j = 0; j < G->vexnum; j++) {
-            if (closest[j] != -1 && G->Edge[minid][j] < lowcost[j]) {
-                lowcost[j] = G->Edge[minid][j];
-                closest[j] = minid;
-            }
-        }
+    int temp = top2;
+    // 从第二个栈中弹出节点，打印值
+    while (top2 >= 0) {
+        TreeNode* node = stack2[top2--];
+        printf("%d ", node->val);  // 后序遍历顺序
     }
+    printf("\n%d", stack2[temp]->val);
 }
 
 int main() {
-    AMGraph graph;
+    // 创建一个简单的二叉树
+    TreeNode* root = createNode(1);
+    root->left = createNode(2);
+    root->right = createNode(3);
+    root->left->left = createNode(4);
+    root->left->right = createNode(5);
 
-    // 初始化图的顶点数和边数
-    graph.vexnum = 5;
-    graph.edgenum = 7;
+    printf("后序遍历结果: ");
+    postOrderTraversal(root);
+    printf("\n");
 
-    // 顶点名称
-    graph.Vex[0] = 'A';
-    graph.Vex[1] = 'B';
-    graph.Vex[2] = 'C';
-    graph.Vex[3] = 'D';
-    graph.Vex[4] = 'E';
-
-    // 初始化邻接矩阵
-    for (int i = 0; i < graph.vexnum; i++) {
-        for (int j = 0; j < graph.vexnum; j++) {
-            if (i == j) {
-                graph.Edge[i][j] = 0;  // 对角线为0
-            } else {
-                graph.Edge[i][j] = INFINITY;  // 其他位置初始化为无穷大
-            }
-        }
-    }
-
-    // 设置边的权值
-    graph.Edge[0][1] = 2;
-    graph.Edge[0][3] = 6;
-    graph.Edge[1][2] = 3;
-    graph.Edge[1][3] = 8;
-    graph.Edge[1][4] = 5;
-    graph.Edge[2][4] = 7;
-    graph.Edge[3][4] = 9;
-
-    // 对称赋值，因为是无向图
-    for (int i = 0; i < graph.vexnum; i++) {
-        for (int j = i + 1; j < graph.vexnum; j++) {
-            graph.Edge[j][i] = graph.Edge[i][j];
-        }
-    }
-
-    // 调用Prim算法，假设从顶点A（下标0）开始
-    printf("最小生成树的边及权重：\n");
-    PrimAM(&graph, 0);
-
+    // 释放内存（这里省略了内存释放的代码）
     return 0;
 }

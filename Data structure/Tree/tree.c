@@ -340,7 +340,7 @@ void InOrderNonRecursion(BiTree T) {
     }
 }
 
-void PostOrderRecursion(BiTree T) {
+void PostOrderNonRecursion(BiTree T) {
     if (T = NULL)
         return;
     LinkStack s1, s2;

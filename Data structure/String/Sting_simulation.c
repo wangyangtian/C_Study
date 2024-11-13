@@ -3,26 +3,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int MyAtoi(const char *str){
-    int result=0;
-    int sign=1;
+int MyAtoi(const char* str) {
+    int result = 0;
+    int sign = 1;
 
-    while(*str==' '){
+    while (*str == ' ') {
         str++;
     }
-    while(*str=='-'||*str=='+'){
-        sign=(*str=='-')?-1:1;
+    while (*str == '-' || *str == '+') {
+        sign = (*str == '-') ? -1 : 1;
         str++;
     }
-    while(isdigit(*str)){
-        int digit=*str-'0';
-        result=result*10+digit;
+    while (isdigit(*str)) {
+        int digit = *str - '0';
+        result = result * 10 + digit;
         str++;
     }
-    return result*sign;
+    return result * sign;
 }
-
-
 
 void* MyMemcpy(void* dest, const void* src, size_t n) {
     char* d = (char*)dest;
@@ -156,7 +154,6 @@ char* MyStrchr(const char* str, int ch) {
 
 static char* _strtok = NULL;
 
-
 /**
  * @brief 分割字符串为一系列标记（tokens），这些标记由一组指定的分隔符分割。
  *
@@ -206,9 +203,9 @@ char* MyStrtok(char* s, const char* delim) {
 
 int main() {
     char str[] = "Hello, World! Welcome to C programming.";
-    char *delim = " ,.!";
+    char* delim = " ,.!";
 
-    char *token = MyStrtok(str, delim);
+    char* token = MyStrtok(str, delim);
     while (token != NULL) {
         printf("%s\n", token);
         token = MyStrtok(NULL, delim);

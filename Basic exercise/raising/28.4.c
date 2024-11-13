@@ -6,10 +6,10 @@
 
 typedef struct Huff {
     char data;
-    int  parent;
-    int  lchild;
-    int  rchild;
-    int  weight;
+    int parent;
+    int lchild;
+    int rchild;
+    int weight;
 } Huff;
 
 typedef struct HuffCode {
@@ -19,7 +19,7 @@ typedef struct HuffCode {
 
 void initHuff(Huff *h, char *data, int *weight, int n) {
     for (int i = 0; i < n; i++) {
-        h[i].data   = data[i];
+        h[i].data = data[i];
         h[i].weight = weight[i];
         h[i].parent = h[i].lchild = h[i].rchild = -1;
     }
@@ -43,8 +43,8 @@ int findMin(Huff *h, int n) {
 
 void createHuff(Huff *h, int n) {
     for (int i = n; i < 2 * n - 1; i++) {
-        int n1      = findMin(h, i);
-        int n2      = findMin(h, i);
+        int n1 = findMin(h, i);
+        int n2 = findMin(h, i);
         h[i].lchild = n1;
         h[i].rchild = n2;
         h[i].weight = h[n1].weight + h[n2].weight;
@@ -53,7 +53,7 @@ void createHuff(Huff *h, int n) {
 
 void encoding(Huff *h, char *code, int cIndex, int hIndex, HuffCode *hcode, int *i) {
     if (h[hIndex].lchild == -1 && h[hIndex].rchild == -1) {
-        code[cIndex]   = '\0';
+        code[cIndex] = '\0';
         hcode[*i].data = h[hIndex].data;
         strcpy(hcode[*i].code, code);
         (*i)++;
@@ -73,8 +73,8 @@ void decoding(Huff *h, int n, const char *codeFileName, const char *textFileName
     FILE *codeFile = fopen(codeFileName, "r");
     FILE *textFile = fopen(textFileName, "w");
 
-    int  rootIndex = 2 * n - 2;
-    int  current   = rootIndex;
+    int rootIndex = 2 * n - 2;
+    int current = rootIndex;
     char c;
     while ((c = fgetc(codeFile)) != EOF) {
         if (c == '0')
@@ -82,19 +82,19 @@ void decoding(Huff *h, int n, const char *codeFileName, const char *textFileName
         else
             current = h[current].rchild;
 
-        if(h[current].lchild==-1&&h[current].rchild==-1){
+        if (h[current].lchild == -1 && h[current].rchild == -1) {
             fputc(h[current].data, textFile);
             current = rootIndex;
-        }    
+        }
     }
     fclose(codeFile);
     fclose(textFile);
 }
 
 int main() {
-    int  n         = 5;
-    char data[5]   = {'a', 'b', 'c', 'd', 'e'};
-    int  weight[5] = {1, 2, 3, 4, 5};
+    int n = 5;
+    char data[5] = {'a', 'b', 'c', 'd', 'e'};
+    int weight[5] = {1, 2, 3, 4, 5};
 
     Huff h[2 * n - 1];
     initHuff(h, data, weight, n);
@@ -104,9 +104,9 @@ int main() {
     fwrite(h, sizeof(Huff), 2 * n - 1, fp);
     fclose(fp);
 
-    char     code[10];
+    char code[10];
     HuffCode hcode[n];
-    int      index = 0;
+    int index = 0;
     encoding(h, code, 0, 2 * n - 2, hcode, &index);
 
     FILE *fp1 = fopen("ToBeTran.txt", "r");

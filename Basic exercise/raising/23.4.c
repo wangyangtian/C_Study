@@ -10,7 +10,6 @@ int quick_select(int s[], int left, int right, int k) {
                 s[i++] = s[j];
             // 从左向右找第一个小于等于 pivot 的数
             while (i < j && s[i] > pivot)
-                
                 i++;
             if (i < j)
                 s[j--] = s[i];
@@ -51,8 +50,8 @@ int main() {
         printf("k 超出数组范围\n");
     }
     Sort(arr, 0, 3);
-    for (int i = 0; i < 4;i++){
+    for (int i = 0; i < 4; i++) {
         printf("%d ", arr[i]);
     }
-        return 0;
+    return 0;
 }

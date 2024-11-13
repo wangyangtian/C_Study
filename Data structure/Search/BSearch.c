@@ -34,5 +34,7 @@ int BSearch(int a[], int len, int target) {
 }
 
 int main() {
+    int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
+    BSearch_R(a, 1, 18, 15);
     return 0;
 }

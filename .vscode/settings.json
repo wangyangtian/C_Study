@@ -16,6 +16,7 @@
         "numeric": "c",
         "math.h": "c",
         "bitset": "c",
-        "regex": "c"
+        "regex": "c",
+        "unistd.h": "c"
     }
 }

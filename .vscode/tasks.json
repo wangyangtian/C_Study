@@ -9,7 +9,8 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\a.exe"
+                "${fileDirname}\\a.exe",
+                "-lpthread"
             ],
             "options": {
                 "cwd": "${fileDirname}"
