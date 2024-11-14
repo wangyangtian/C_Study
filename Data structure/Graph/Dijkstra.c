@@ -28,20 +28,6 @@ typedef struct ALGraph {
     int vexnum, arcnum;  // 图的顶点数和弧数
 } ALGraph;
 
-// 寻找距离最近的未访问顶点
-int MinDistance(int dist[], bool sptSet[], int V) {
-    int min = INFINITY, min_index;
-
-    for (int v = 0; v < V; v++) {
-        if (sptSet[v] == false && dist[v] <= min) {
-            min = dist[v];
-            min_index = v;
-        }
-    }
-
-    return min_index;
-}
-
 // 递归打印路径
 void PrintPath(int prev[], int i) {
     if (prev[i] == -1) {  // 递归终止条件
@@ -65,9 +51,15 @@ void PrintSolution(int dist[], int prev[], int V, int src) {
 // Dijkstra算法实现，求从源点到所有顶点的最短路径
 void Dijkstra(AMGraph* g, int src) {
     int V = g->vexnum;                    // 顶点个数
-    int dist[MAXVERTEXNUM] = {INFINITY};  // 存储源点到每个顶点的最短距离
+    int dist[MAXVERTEXNUM];               // 存储源点到每个顶点的最短距离
     bool sptSet[MAXVERTEXNUM] = {false};  // sptSet[i]为true表示顶点i在(Shortest Path Tree Set)中
-    int prev[MAXVERTEXNUM] = {-1};        // prev[i]表示从源点到i的最短路径上的前一个顶点
+    int prev[MAXVERTEXNUM];               // 记录最短路径前驱节点
+
+    // 初始化距离数组，所有节点的距离设为无穷大
+    for (int i = 0; i < V; i++) {
+        dist[i] = INFINITY;
+        prev[i] = -1;
+    }
 
     // 源点到自身距离为0
     dist[src] = 0;
@@ -75,7 +67,14 @@ void Dijkstra(AMGraph* g, int src) {
     // 找到从源点到所有其他顶点的最短路径
     for (int count = 0; count < V - 1; count++) {
         // 从尚未处理的顶点中选择距离最小的顶点
-        int u = (dist, sptSet, V);
+        int min = INFINITY;
+        int u = -1;
+        for (int i = 0; i < V; i++) {
+            if (sptSet[i] == false && dist[i] <= min) {
+                min = dist[i];
+                u = i;
+            }
+        }
 
         // 将选中的顶点加入到最短路径树中
         sptSet[u] = true;

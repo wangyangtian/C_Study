@@ -1,63 +1,69 @@
+#include <limits.h>
 #include <stdio.h>
-#include <stdlib.h>
 
-typedef struct TreeNode {
-    int val;
-    struct TreeNode* left;
-    struct TreeNode* right;
-} TreeNode;
+#define MAXSIZE 100
+#define INF INT_MAX
 
-// 创建一个新节点
-TreeNode* createNode(int value) {
-    TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));
-    newNode->val = value;
-    newNode->left = newNode->right = NULL;
-    return newNode;
-}
+typedef struct Graph {
+    int vertex[MAXSIZE];
+    int edge[MAXSIZE][MAXSIZE];
+    int v_num, e_num;
+} Graph;
 
-// 非递归后序遍历
-void postOrderTraversal(TreeNode* root) {
-    if (root == NULL)
-        return;
+// Dijkstra 算法
+void Dijkstra(Graph *g, int start) {
+    int dist[MAXSIZE];           // 最短路径数组
+    int visited[MAXSIZE] = {0};  // 访问标记数组
+    int i, j;
 
-    TreeNode* stack1[100];  // 第一个栈
-    TreeNode* stack2[100];  // 第二个栈
-    int top1 = -1, top2 = -1;
-
-    stack1[++top1] = root;  // 将根节点压入第一个栈
-
-    while (top1 >= 0) {
-        TreeNode* node = stack1[top1--];  // 弹出节点
-        stack2[++top2] = node;            // 将弹出的节点压入第二个栈
-
-        // 将左子节点压入第一个栈
-        if (node->left)
-            stack1[++top1] = node->left;
-        // 将右子节点压入第一个栈
-        if (node->right)
-            stack1[++top1] = node->right;
+    // 初始化距离数组，所有距离初始为无穷大，起点到自己的距离为0
+    for (i = 0; i < g->v_num; i++) {
+        dist[i] = INF;
     }
-    int temp = top2;
-    // 从第二个栈中弹出节点，打印值
-    while (top2 >= 0) {
-        TreeNode* node = stack2[top2--];
-        printf("%d ", node->val);  // 后序遍历顺序
+
+    dist[start] = 0;
+
+    // 执行 Dijkstra 算法
+    for (i = 0; i < g->v_num; i++) {
+        int min_dist = INF, u = -1;
+
+        // 找到未访问的最小距离的节点
+        for (j = 0; j < g->v_num; j++) {
+            if (!visited[j] && dist[j] < min_dist) {
+                min_dist = dist[j];
+                u = j;
+            }
+        }
+
+        // 标记节点 u 为已访问
+        visited[u] = 1;
+
+        // 更新 u 相邻节点的最短距离
+        for (j = 0; j < g->v_num; j++) {
+            if (g->edge[u][j] != INF && dist[u] + g->edge[u][j] < dist[j]) {
+                dist[j] = dist[u] + g->edge[u][j];
+            }
+        }
     }
-    printf("\n%d", stack2[temp]->val);
+
+    // 输出从起点到各个节点的最短路径
+    printf("Shortest distances from vertex %d:\n", start);
+    for (i = 0; i < g->v_num; i++) {
+        if (dist[i] == INF) {
+            printf("Vertex %d: No path\n", i);
+        } else {
+            printf("Vertex %d: %d\n", i, dist[i]);
+        }
+    }
 }
 
 int main() {
-    // 创建一个简单的二叉树
-    TreeNode* root = createNode(1);
-    root->left = createNode(2);
-    root->right = createNode(3);
-    root->left->left = createNode(4);
-    root->left->right = createNode(5);
+    // 创建一个简单的图
+    Graph g = {
+        .v_num = 5, .e_num = 8, .edge = {{INF, 10, INF, INF, INF}, {10, INF, 5, INF, INF}, {INF, 5, INF, 2, 1}, {INF, INF, 2, INF, 3}, {INF, INF, 1, 3, INF}}};
 
-    printf("后序遍历结果: ");
-    postOrderTraversal(root);
-    printf("\n");
+    // 计算从顶点 0 开始的最短路径
+    Dijkstra(&g, 0);
 
-    // 释放内存（这里省略了内存释放的代码）
     return 0;
 }
