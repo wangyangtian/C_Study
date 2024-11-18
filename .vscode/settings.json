@@ -17,6 +17,7 @@
         "math.h": "c",
         "bitset": "c",
         "regex": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "valarray": "c"
     }
 }
