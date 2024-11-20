@@ -1,25 +1,77 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-void Combine(int n, int r, int comb[], int R) {
-    if (r == 0) {
-        for (int i = 0; i < R; i++) {
-            printf("%d ", comb[i]);
-        }
-        printf("\n");
-        return;  // 终止递归
+// 定义链表节点
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node, *List;
+
+// 创建新节点
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// 初始化链表
+List createList(int arr[], int size) {
+    if (size == 0)
+        return NULL;
+
+    List head = createNode(arr[0]);
+    Node* current = head;
+    for (int i = 1; i < size; i++) {
+        current->next = createNode(arr[i]);
+        current = current->next;
     }
+    return head;
+}
 
-    for (int j = n; j >= r; j--) {
-        comb[r - 1] = j;                 // 当前组合存储在 comb[r-1]
-        Combine(j - 1, r - 1, comb, R);  // 递归选择下一个数字
+// 打印链表
+void printList(List head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+// 交换函数
+void exchange(List l, Node* p) {
+    Node* t = l;
+    while (t) {
+        if (t->next == p) {
+            Node* q = p->next;
+            p->next = q->next;
+            q->next = p;
+            t->next = q;
+            break;
+        }
+        t = t->next;
     }
 }
 
+// 主函数测试
 int main() {
-    int a[10];  // 用于存储组合的数组
-    int n = 5, r = 3;
+    // 初始化链表
+    int arr[] = {1, 2, 3, 4, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    List head = createList(arr, size);
 
-    printf("All combinations of %d choose %d:\n", n, r);
-    Combine(n, r, a, r);
+    printf("原始链表：\n");
+    printList(head);
+
+    // 获取要交换的节点
+    Node* p = head->next;
+
+    // 调用交换函数
+    exchange(head, p);
+
+    printf("\n交换后链表：\n");
+    printList(head);
+
     return 0;
 }
