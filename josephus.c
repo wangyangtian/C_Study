@@ -8,18 +8,19 @@ int findLastPerson(int n, int k) {
     return (findLastPerson(n - 1, k) + k) % n;
 }
 
-int josephus(int n, int k) {    //非递归形式
+int josephus(int n, int k) {  // 非递归形式
     int res = 0;
     for (int i = 1; i <= n; ++i)
-      res = (res + k) % i;
+        res = (res + k) % i;
     return res + 1;
 }
-//https://blog.csdn.net/u011500062/article/details/72855826
+
+// https://blog.csdn.net/u011500062/article/details/72855826
 int main() {
     int n;
     printf("请输入总人数N: ");
     scanf("%d", &n);
-    int lastPerson = findLastPerson(n, 3) + 1;  // 加1调整编号从1开始
+    int lastPerson = findLastPerson(n, 4) + 1;  // 加1调整编号从1开始
     printf("最后留下的人的编号是: %d\n", lastPerson);
     return 0;
 }

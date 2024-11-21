@@ -11,18 +11,20 @@ typedef struct Tree {
 } TNode, *Tree;
 
 Tree creatTree(char pre[], char in[], int n) {
-    Tree t = (TNode *)malloc(sizeof(TNode));
-    t->data = pre[0];
-    t->lchild = t->rchild = NULL;
-    int index = -1;
+    TNode *root = (TNode *)malloc(sizeof(TNode));
+    root->data = pre[0];
+    root->lchild = root->rchild = NULL;
+
+    int rootIndex = -1;
     for (int i = 0; i < n; i++) {
-        if (in[i] == t->data) {
-            index = i;
+        if (in[i] == root->data) {
+            rootIndex = i;
             break;
         }
     }
-    t->lchild = creatTree(pre + 1, in, index);
-    t->rchild = creatTree(pre + 1 + index, in + 1 + index, n - index - 1);
+
+    root->lchild = creatTree(pre + 1, in, rootIndex);
+    root->rchild = creatTree(pre + rootIndex + 1, in + rootIndex + 1, n - rootIndex - 1);
 }
 
 int main() {

@@ -1,77 +1,56 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
-// 定义链表节点
-typedef struct Node {
-    int data;
-    struct Node* next;
-} Node, *List;
+void findLongestCommonSubstring(const char *s1, const char *s2) {
+    int len1 = strlen(s1);
+    int len2 = strlen(s2);
 
-// 创建新节点
-Node* createNode(int data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
-}
+    int maxLength = 0;  // 最长公共子串长度
+    int startPos1 = 0;  // 最长公共子串在 s1 中的起始位置
+    int startPos2 = 0;  // 最长公共子串在 s2 中的起始位置
 
-// 初始化链表
-List createList(int arr[], int size) {
-    if (size == 0)
-        return NULL;
+    // 遍历 s1 的所有子串
+    for (int i = 0; i < len1; i++) {
+        for (int j = i; j < len1; j++) {
+            int currentLength = j - i + 1;  // 当前子串长度
 
-    List head = createNode(arr[0]);
-    Node* current = head;
-    for (int i = 1; i < size; i++) {
-        current->next = createNode(arr[i]);
-        current = current->next;
-    }
-    return head;
-}
+            // 如果当前子串长度小于或等于已知最长长度，跳过
+            if (currentLength <= maxLength) {
+                continue;
+            }
 
-// 打印链表
-void printList(List head) {
-    Node* current = head;
-    while (current != NULL) {
-        printf("%d -> ", current->data);
-        current = current->next;
-    }
-    printf("NULL\n");
-}
+            // 提取 s1 的子串
+            char subStr[currentLength + 1];
+            strncpy(subStr, &s1[i], currentLength);
+            subStr[currentLength] = '\0';  // 添加字符串终止符
 
-// 交换函数
-void exchange(List l, Node* p) {
-    Node* t = l;
-    while (t) {
-        if (t->next == p) {
-            Node* q = p->next;
-            p->next = q->next;
-            q->next = p;
-            t->next = q;
-            break;
+            // 在 s2 中查找该子串
+            if (strstr(s2, subStr) != NULL) {
+                maxLength = currentLength;
+                startPos1 = i;
+                startPos2 = strstr(s2, subStr) - s2;
+            }
         }
-        t = t->next;
+    }
+
+    // 输出结果
+    printf("Longest Common Substring Length: %d\n", maxLength);
+    if (maxLength > 0) {
+        printf("Substring in s1 starts at: %d\n", startPos1);
+        printf("Substring in s2 starts at: %d\n", startPos2);
+        printf("Longest Common Substring: ");
+        for (int i = 0; i < maxLength; i++) {
+            printf("%c", s1[startPos1 + i]);
+        }
+        printf("\n");
     }
 }
 
-// 主函数测试
 int main() {
-    // 初始化链表
-    int arr[] = {1, 2, 3, 4, 5};
-    int size = sizeof(arr) / sizeof(arr[0]);
-    List head = createList(arr, size);
+    const char *s1 = "abcdefg";
+    const char *s2 = "xyzabcm";
 
-    printf("原始链表：\n");
-    printList(head);
-
-    // 获取要交换的节点
-    Node* p = head->next;
-
-    // 调用交换函数
-    exchange(head, p);
-
-    printf("\n交换后链表：\n");
-    printList(head);
+    findLongestCommonSubstring(s1, s2);
 
     return 0;
 }
