@@ -5,15 +5,15 @@
 #include <string.h>
 
 typedef struct point {
-    float         x;
-    float         y;
+    float x;
+    float y;
     struct point* next;
 } Point;
 
 typedef struct ploy {
-    char         type[20];
-    int          Num;
-    Point*       Points;
+    char type[20];
+    int Num;
+    Point* Points;
     struct ploy* next;
 } ploy;
 
@@ -24,9 +24,8 @@ typedef struct Ring {
 
 void load(const char* path, Ring* i) {
     FILE* fp = fopen(path, "r");
-    char  str1[10], str2[10];
+    char str1[10], str2[10];
     while (fscanf(fp, "%s %s", str1, str2) == 2) {
-
         ploy* whichPloy;
         if (strcmp(str1, "#Exterior") == 0) {
             strcpy(i->Exterior.type, "Exterior Ring");
@@ -38,16 +37,16 @@ void load(const char* path, Ring* i) {
 
         fscanf(fp, "%d", &whichPloy->Num);
 
-        whichPloy->Points       = (Point*) malloc(sizeof(Point));
+        whichPloy->Points = (Point*)malloc(sizeof(Point));
         whichPloy->Points->next = NULL;
-        Point* p                = whichPloy->Points;
+        Point* p = whichPloy->Points;
 
         for (int j = 0; j < whichPloy->Num; j++) {
-            Point* pt = (Point*) malloc(sizeof(Point));
+            Point* pt = (Point*)malloc(sizeof(Point));
             fscanf(fp, "%f, %f", &pt->x, &pt->y);
             pt->next = NULL;
-            p->next  = pt;
-            p        = pt;
+            p->next = pt;
+            p = pt;
         }
     }
     fclose(fp);
@@ -70,7 +69,7 @@ void print(Ring* i, char type) {
     }
 }
 
-void delete(Ring* i,char type,int n){
+void delete(Ring* i, char type, int n) {
     ploy* t;
     if (type == 'e')
         t = &i->Exterior;
@@ -78,14 +77,14 @@ void delete(Ring* i,char type,int n){
         t = &i->Interior;
 
     Point* prev = t->Points;
-    for (int i = 0; i < n -1; i++)
+    for (int i = 0; i < n - 1; i++)
         prev = prev->next;
     Point* current = prev->next;
-    prev->next     = current->next;
+    prev->next = current->next;
     free(current);
 }
 
-void insert(Ring*i,char type ,int n,Point pt){
+void insert(Ring* i, char type, int n, Point pt) {
     ploy* t;
     if (type == 'e')
         t = &i->Exterior;
@@ -95,13 +94,12 @@ void insert(Ring*i,char type ,int n,Point pt){
     for (int i = 0; i < n - 1; i++)
         prev = prev->next;
     Point* current = prev->next;
-    Point* add     = (Point*) malloc(sizeof(Point));
-    add->x         = pt.x;
-    add->y         = pt.y;
-    add->next      = current;
-    prev->next     = add;
+    Point* add = (Point*)malloc(sizeof(Point));
+    add->x = pt.x;
+    add->y = pt.y;
+    add->next = current;
+    prev->next = add;
 }
-
 
 int main() {
     Ring i;

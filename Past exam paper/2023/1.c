@@ -9,7 +9,7 @@ int main() {
     int min = INT_MAX;
     int a;
     for (int i = 0; i < 10; i++) {
-        printf("输入第%d个数",i+1);
+        printf("输入第%d个数\n", i + 1);
         scanf("%d", &a);
         if (a > max)
             max = a;
