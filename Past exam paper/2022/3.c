@@ -8,7 +8,6 @@
 char* stringcat(char* s1, char* s2, char* s3) {
     int slen1 = strlen(s1);
     int slen2 = strlen(s2);
-    char* s = s3;
     if (slen1 < slen2) {
         while (*s1 != '\0') {
             *s3++ = *s1++;
@@ -25,7 +24,7 @@ char* stringcat(char* s1, char* s2, char* s3) {
         }
     }
     *s3 = '\0';
-    return s;
+    return s3;
 }
 
 int main() {

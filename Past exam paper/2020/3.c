@@ -10,9 +10,9 @@ typedef struct List {
     struct List* next;
 } Node, *List;
 
-void insert(List* l, Node* n) {
-    n->next = (*l)->next;
-    (*l)->next = n;
+void insert(List l, Node* n) {
+    n->next = l->next;
+    l->next = n;
 }
 
 List merge(List a, List b) {
@@ -26,12 +26,12 @@ List merge(List a, List b) {
             // 如果A的当前节点值大于等于B的当前节点值，插入A节点
             Node* temp = currentA;
             currentA = currentA->next;
-            insert(&newHead, temp);
+            insert(newHead, temp);
         } else {
             // 如果B的当前节点值大于A的当前节点值，插入B节点
             Node* temp = currentB;
             currentB = currentB->next;
-            insert(&newHead, temp);
+            insert(newHead, temp);
         }
     }
 
@@ -39,14 +39,14 @@ List merge(List a, List b) {
     while (currentA != NULL) {
         Node* temp = currentA;
         currentA = currentA->next;
-        insert(&newHead, temp);
+        insert(newHead, temp);
     }
 
     // 如果B链表还有剩余，插入B的剩余节点
     while (currentB != NULL) {
         Node* temp = currentB;
         currentB = currentB->next;
-        insert(&newHead, temp);
+        insert(newHead, temp);
     }
 
     return newHead;
@@ -74,17 +74,17 @@ int main() {
     // 创建链表a
     List a = (List)malloc(sizeof(Node));
     a->next = NULL;
-    insert(&a, createNode(7));
-    insert(&a, createNode(5));
-    insert(&a, createNode(3));
-    insert(&a, createNode(1));
+    insert(a, createNode(7));
+    insert(a, createNode(5));
+    insert(a, createNode(3));
+    insert(a, createNode(1));
 
     // 创建链表b
     List b = (List)malloc(sizeof(Node));
     b->next = NULL;
-    insert(&b, createNode(6));
-    insert(&b, createNode(4));
-    insert(&b, createNode(2));
+    insert(b, createNode(6));
+    insert(b, createNode(4));
+    insert(b, createNode(2));
 
     printf("List A (ascending order): ");
     printList(a);

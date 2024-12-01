@@ -1,5 +1,9 @@
+#include <ctype.h>
+#include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct DEM {
     double x0, y0;
@@ -35,40 +39,5 @@ void processDEM(DEM *d) {
 }
 
 int main() {
-    // 示例 DEM 数据初始化
-    DEM d;
-    d.xcount = 10;
-    d.ycount = 10;
-
-    // 动态分配 alt 数组
-    d.alt = (double **)malloc(d.xcount * sizeof(double *));
-    for (int i = 0; i < d.xcount; i++) {
-        d.alt[i] = (double *)malloc(d.ycount * sizeof(double));
-    }
-
-    // 假设 alt 已经被填充了一些数据
-    for (int i = 0; i < d.xcount; i++) {
-        for (int j = 0; j < d.ycount; j++) {
-            d.alt[i][j] = i * d.ycount + j;  // 这里可以使用任意的初始化方式
-        }
-    }
-
-    // 处理 DEM 数据
-    processDEM(&d);
-
-    // 打印处理后的 alt 数据
-    for (int i = 0; i < d.xcount; i++) {
-        for (int j = 0; j < d.ycount; j++) {
-            printf("%.2f ", d.alt[i][j]);
-        }
-        printf("\n");
-    }
-
-    // 释放动态分配的 alt 数组
-    for (int i = 0; i < d.xcount; i++) {
-        free(d.alt[i]);
-    }
-    free(d.alt);
-
     return 0;
 }

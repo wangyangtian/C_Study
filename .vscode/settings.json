@@ -18,6 +18,7 @@
         "bitset": "c",
         "regex": "c",
         "unistd.h": "c",
-        "valarray": "c"
+        "valarray": "c",
+        "source_location": "c"
     }
 }

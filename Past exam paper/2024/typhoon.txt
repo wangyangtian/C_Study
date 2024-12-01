@@ -1,0 +1,40 @@
+ID:23
+Name:杜苏芮
+Points{
+{
+Lon:33.0
+Lat:21.2
+Movespeed:9
+Time:2023-7-21 19:00:00
+}
+{
+Lon:33.0
+Lat:21.2
+Movespeed:9
+Time:2023-7-22 19:00:00
+}
+{
+Lon:35.0
+Lat:22.0
+Movespeed:10
+Time:2023-7-23 01:00:00
+}
+{
+Lon:37.0
+Lat:22.5
+Movespeed:11
+Time:2023-7-24 05:00:00
+}
+{
+Lon:44.0
+Lat:23.8
+Movespeed:17
+Time:2023-7-29 23:00:00
+}
+{
+Lon:44.0
+Lat:23.8
+Movespeed:17
+Time:2023-7-23 23:00:00
+}
+}

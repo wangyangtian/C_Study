@@ -1,6 +1,7 @@
 #include "stdbool.h"
 #include "stdio.h"
 #include "stdlib.h"
+
 typedef struct Single_linked_list  // 定义单链表结点类型
 {
     int data;                         // 每个节点存放一个数据元素
@@ -147,6 +148,7 @@ bool DeleteNode(LNode *p) {
     free(q);             // 释放q所指空间，即删除结点的空间
     return true;
 }
+
 // ！！但是如果p是最后一个结点，会出现错误。
 // 只能从表头开始依次寻找p的前驱,时间复杂度 O(n)
 
@@ -290,6 +292,7 @@ bool InplaceReverse(LinkList *L) {
         (*L)->next = current;
         current = temp;
     }
+    return true;
 }
 
 bool SplitByParity(LinkList *A, LinkList *B) {
@@ -316,6 +319,7 @@ bool SplitByParity(LinkList *A, LinkList *B) {
     }
     return true;
 }
+
 int main() {
     LinkList L;
 

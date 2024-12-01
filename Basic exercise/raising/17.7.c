@@ -15,24 +15,27 @@ typedef struct BTNode {
 int Width(BTree t) {
     if (t == NULL)
         return 0;
-    
+
     int maxWidth = 0;
-    BTNode *queue[MAXSIZE];
+    BTNode* queue[MAXSIZE];
     int rear = 0, front = 0;
     queue[++rear] = t;
-    while(rear!=front){
+    while (rear != front) {
         int currentWidth = (rear + MAXSIZE - front) % MAXSIZE;
         maxWidth = maxWidth > currentWidth ? maxWidth : currentWidth;
-        while (currentWidth>0)
-        {
+        while (currentWidth > 0) {
             front = (++front) % MAXSIZE;
             BTNode* temp = queue[front];
             currentWidth--;
-            rear = (++rear) % MAXSIZE;
-            if(temp->lchild)
+
+            if (temp->lchild) {
+                rear = (++rear) % MAXSIZE;
                 queue[rear] = temp->lchild;
-            if(temp->rchild)
+            }
+            if (temp->rchild) {
+                rear = (++rear) % MAXSIZE;
                 queue[rear] = temp->rchild;
+            }
         }
     }
     return maxWidth;

@@ -34,7 +34,7 @@ int sub_move(int a[], int n) {
 }
 
 int main() {
-    int a[] = {3, 5, 7, 9, 11, 13, 15, 17};
+    int a[] = {12, 5, 7, 9, 10, 13, 15, 17};
     int sum = sub_move(a, 8);
     char path[] = "result.txt";
     FILE* fp = fopen(path, "w");
@@ -44,5 +44,6 @@ int main() {
         fprintf(fp, "%d ", a[i]);
         printf("%d ", a[i]);
     }
+    fclose(fp);
     return 0;
 }
